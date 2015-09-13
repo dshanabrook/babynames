@@ -31,15 +31,13 @@ getAggregatedYears <- function(df){
 }
 getSorted <- function(df, sortAlpha){
 	if (doDebug) print("getSorted ")
-	#df <- subset(df, select=-c(n))
 	if (sortAlpha) 
 		data <- unique(sort(df$name))
 	else {
 		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")
 		df <- df[order(df$prop,df$name,decreasing=T),]
-		data <- df$name	
 		}
-	return(data)	
+	return(df)	
 	}
 
 parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){
@@ -51,14 +49,13 @@ parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){
 		return(df)
 }
 
-lookupOneName <-function(theSex, theLookup, startYear, endYear){
-		namesOneSex <- doSexSubset(babynames, theSex)
-		namesYears  <- doYearSubset(namesOneSex,startYear, endYear)
-		theAgg <- getAggregatedYears(namesYears)
-		theAgg$rank <- perc.rank(theAgg$prop)
-		theName <- theAgg[theAgg$name==theLookup,]
-		
-		return(theName$prop*100)
+lookupOneName <-function(theLookup, df){
+	if (doDebug) print("lookupOneName ")
+		df$rank <- perc.rank(df$prop)
+		theName <- df[df$name==theLookup,]
+		theProp <- theName$prop*100
+		print(theProp)
+		return(theProp)
 	
 }
 #http://stats.stackexchange.com/questions/11924/computing-percentile-rank-in-r

@@ -10,16 +10,11 @@ startY <- 1880
 	theSex <- "F"
 
 theLookup <- "Mary"
-names <- getAggregatedYears(getYearsNames(getSexNames(babynames,theSex), theYears))
-names[names$name==theLookup,]$prop*100
-	x <-								getSorted(
-										getAggregatedYears(
-											startsWith(
-												getYearsNames(
-														getSexNames(babynames,theSex),
-														theYears),
-												theLetters)
-											),
-									sortAlpha)
 
-lookupOneName(theSex,theLookup, theYears)
+	names <- parseNames(theSex, startYear, endYear, theLetters)
+	namesSorted <- getSorted(names, sortAlpha)
+	
+	allTheNames <- namesSorted$name
+	theOneFreq <- lookupOneName(theLookup, namesSorted)
+	
+
