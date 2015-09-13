@@ -2,19 +2,14 @@
 doYearSubset <- function(df, startYear, endYear){
 	if (doDebug) print("doYearSubset ")
 	df <- df[(df$year>= startYear) & (df$year<= endYear),]	
-	df <- subset(df, select=-c(year))
+	#df <- subset(df, select=-c(year))
 	return(df)
 }
 doSexSubset <- function(df, theSex){
 	if (doDebug) print("doSexSubset ")
 	df <- df[df$sex==theSex,]
-	df <- subset(df, select=-c(sex))
+#	df <- subset(df, select=-c(sex))
 	return(df)
-}
-getUniqueNames <- function(data){
-	if (doDebug) print("getUniqueNames ")
-	data <- unique(data)
-	return(data)
 }
 doStartsWithSubset <- function(df, letters="bb"){
 	if (doDebug) print("doStartsWithSubset ")
