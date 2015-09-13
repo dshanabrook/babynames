@@ -1,19 +1,23 @@
 
-getYearsNames <- function(df, yearRange){
-	df <- df[(df$year>=yearRange[1]) & (df$year<=yearRange[2]),]	
+doYearSubset <- function(df, startYear, endYear){
+	if (doDebug) print("doYearSubset ")
+	df <- df[(df$year>= startYear) & (df$year<= endYear),]	
 	df <- subset(df, select=-c(year))
 	return(df)
 }
-getSexNames <- function(df, theSex){
+doSexSubset <- function(df, theSex){
+	if (doDebug) print("doSexSubset ")
 	df <- df[df$sex==theSex,]
 	df <- subset(df, select=-c(sex))
 	return(df)
 }
 getUniqueNames <- function(data){
+	if (doDebug) print("getUniqueNames ")
 	data <- unique(data)
 	return(data)
 }
-startsWith <- function(df, letters="bb"){
+doStartsWithSubset <- function(df, letters="bb"){
+	if (doDebug) print("doStartsWithSubset ")
 	substr(letters,1,1) <- toupper(substr(letters,1,1))
 	substr(letters,2,nchar(letters)) <- tolower(substr(letters,2,nchar(letters)))
 	df <- df[substr(df$name,1,nchar(letters))==letters,]
@@ -21,10 +25,12 @@ startsWith <- function(df, letters="bb"){
 }
 
 getAggregatedYears <- function(df){
+	if (doDebug) print("getAggregatedYears ")
 	df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")	
 	return(df)
 }
 getSorted <- function(df, sortAlpha){
+	if (doDebug) print("getSorted ")
 	#df <- subset(df, select=-c(n))
 	if (sortAlpha) 
 		data <- unique(sort(df$name))
@@ -36,13 +42,13 @@ getSorted <- function(df, sortAlpha){
 	return(data)	
 	}
 
-parseNames <- function(theSex,theYears,theLetters,sortAlpha){
-		namesOneSex <- getSexNames(babynames, theSex)
-		namesYears  <- getYearsNames(namesOneSex,theYears)
-		namesLetters<- startsWith(namesYears,theLetters)
-		namesAggregated <- getAggregatedYears(namesLetters)
-		namesSorted <- getSorted(namesLetters,sortAlpha)
-		return(namesSorted)
+parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){
+	if (doDebug) print("parsenames ")
+		df <- doSexSubset(babynames, theSex)
+		df  <- doYearSubset(df,startYear, endYear)
+		df<- doStartsWithSubset(df,theLetters)
+		df <- getAggregatedYears(df)
+		return(df)
 }
 
 lookupOneName <-function(theSex, theLookup, theYears){
