@@ -51,9 +51,9 @@ parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){
 		return(df)
 }
 
-lookupOneName <-function(theSex, theLookup, theYears){
-		namesOneSex <- getSexNames(babynames, theSex)
-		namesYears  <- getYearsNames(namesOneSex,theYears)
+lookupOneName <-function(theSex, theLookup, startYear, endYear){
+		namesOneSex <- doSexSubset(babynames, theSex)
+		namesYears  <- doYearSubset(namesOneSex,startYear, endYear)
 		theAgg <- getAggregatedYears(namesYears)
 		theAgg$rank <- perc.rank(theAgg$prop)
 		theName <- theAgg[theAgg$name==theLookup,]

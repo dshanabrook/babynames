@@ -32,6 +32,7 @@ shinyUI(
 				submitButton("Get Names")
 				),
 		mainPanel(
+		h4(textOutput("theOneFreq")),
 		h5(textOutput("allTheNames")),
 		googleAnalytics()
 	)))

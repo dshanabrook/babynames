@@ -8,6 +8,6 @@ shinyServer(function(input, output, session){
 	namesSorted <- reactive(getSorted(names(), input$sortAlpha))
 	
 	output$allTheNames <- renderText(namesSorted())
-#	theOneFreq <- reactive({lookupOneName(input$theLookup,theYears())})
+	output$theOneFreq <- renderText(lookupOneName(input$theSex, input$theLookup,input$startYear,input$endYear))
 })
 
