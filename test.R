@@ -2,19 +2,19 @@
 library(shiny)
 library(babynames)
 source("~/ShinyApps/babynames/cleanNames.R")
-startY <- 1880
-	endY <- 2013
+startYear <- 1880
+	endYear <- 2013
 	theYears <- c(startY,endY)
 	sortAlpha <- TRUE
-	theLetters <- "M"
+	theLetters <- ""
 	theSex <- "F"
 
 theLookup <- "Mary"
 
-	names <- parseNames(theSex, startYear, endYear, theLetters)
-	namesSorted <- getSorted(names, sortAlpha)
+	df <- parseNames(theSex, startYear, endYear, theLetters)
+	namesSorted <- getSorted(df, sortAlpha)
 	
 	allTheNames <- namesSorted$name
-	theOneFreq <- lookupOneName(theLookup, namesSorted)
+	theOneFreq <- lookupOneName(theLookup, df)
 	
 
