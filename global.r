@@ -1,20 +1,22 @@
+#global for babynames
+library(shiny)
+library(babynames)
+#setwd("~/ShinyApps/babynames/")
+source("cleanNames.R")
+doDebug <<- T	
 
-#returns year range subset
 doYearSubset <- function(df, startYear, endYear){
 	if (doDebug) print("doYearSubset ")
 	df <- df[(df$year>= startYear) & (df$year<= endYear),]	
 	return(df)
 }
 
-#returns sex subset
 doSexSubset <- function(df, theSex){
 	if (doDebug) print("doSexSubset ")
 	df <- df[df$sex==theSex,]
 #	df <- subset(df, select=-c(sex))
 	return(df)
 }
-
-#returns letters subset
 doStartsWithSubset <- function(df, letters="bb"){
 	if (doDebug) print("doStartsWithSubset ")
 	substr(letters,1,1) <- toupper(substr(letters,1,1))

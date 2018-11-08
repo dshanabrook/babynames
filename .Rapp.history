@@ -1,1073 +1,2262 @@
-library("RCurl")#
-library("XML")#
-user="dshanabrook"#
-pass= "oklp098"#
-version= "1.0"#
-dDebug <<- TRUE#
-source("~/shinyapps/tos/source/functions.R")#
-tdSource <- "TSLU"#
+as.POSIXlt(Sys.time())
+as.POSIXlt(Sys.time())$wday
+is.weekend(as.POSIXlt(Sys.time())$wday)
+is.weekend(1)
+is.weekend(0)
+is.weekend(6)
+is.weekend <- function(x) ((as.numeric(x)) %% 7) < 2
+is.weekend <- function(x) (as.numeric(x)==0)!(as.numeric(x==6))
+is.weekend <- function(x) (as.numeric(x)==0)&(as.numeric(x==6))
+is.weekend <- function(x) (as.numeric(x)==0)|(as.numeric(x==6))
+is.weekend(0:7)
+dow <- as.POSIXlt(time(data.zoo))$wday #
+plot(dow, data.zoo)#
+boxplot(dow, data.zoo)#
+x <- data.zoo#
+data$dow <- factor(dow)#
+levels(data$dow) <- c("sun","mon","tues","wed","thur","fri","sat")
+data$dow
+as.numeric(data$dow)
+is.weekend <- function(x) (as.numeric(x)==0)|(as.numeric(x)==6))
+is.weekend <- function(x) (as.numeric(x)==0)|(as.numeric(x)==6)
+summary(is.weekend(data$dow))
+data.weekend
+dow <- as.POSIXlt(time(data.zoo))$wday
+data$dow <- factor(dow)
+is.weekend(data$dow)
+data$dow <- dow
+summary(data.weekend)
+head(data.weekend)
+dow <- as.POSIXlt(time(data.zoo))$wday #
+plot(dow, data.zoo)#
+boxplot(dow, data.zoo)#
+x <- data.zoo#
+data$dayofweek <- factor(dow)#
+data$dow <- dow#
+levels(data$dayofweek) <- c("sun","mon","tues","wed","thur","fri","sat")#
+qplot(dayofweek, hr, data=data, geom=c("boxplot"))
+data.weekend <- data[is.weekend(data$dow),]
+data$weekend <- is.weekend(data$dow)
+hour <- as.POSIXlt(time(data.zoo))$hour
+data$hour <- hour
+qplot(factor(hour), hr, data=data[data$weekend], geom=c("boxplot"), main="weekend")
+qplot(factor(hour), hr, data=data[data$weekend,], geom=c("boxplot"), main="weekend")
+qplot(factor(hour), hr, data=data[!data$weekend,], geom=c("boxplot"), main="weekday")
+ggplot(data=data, geom_boxplot())
+ggplot(data=data, aes(factor(hour),hr) + geom_boxplot()
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot()
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_grid(~dow)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~dow)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~dow, nrow=2)
+data$dayofweek <- relevel("sat")
+data$dayofweek <- relevel(data$dayofweek,"sat")
+levels(data$dayofweek)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~dayofweek, nrow=2)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~dayofweek, nrow=2) + xlim(40,180)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~dayofweek, nrow=2) + ylim(40,180)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~dayofweek, nrow=2) + ylim(60,180)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~weekend, nrow=2) + ylim(60,180)
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~weekend, nrow=2)
+month <- as.POSIXlt(time(data.zoo))$mon#
+data$month <- factor(month)#
+levels(data$month) <- format(ISOdate(2004,1:12,1),"%B")#
+qplot(month, hr, data=data, geom=c("boxplot"))
+hour <- as.POSIXlt(time(data.zoo))$hour#
+plot(hour, data.zoo)#
+data$hour <- hour#
+qplot(factor(hour), hr, data=data, geom=c("boxplot"))
+data.zoo <- read.zoo(temp)#
+plot(data.zoo)
+autoplot.zoo(data.zoo, geom="point") + aes(alpha = 0.1)
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
 #
-tdSource <- "TSLU"#
-sessionid <- TDALogin(tdSource, version, user, pass)#
-brokerID <-"861525704"#
-iraID <- "861204652"
-source("~/shinyapps/tos/source/functions.R")
-tdSource <- "TSLU"
-sessionid <- TDALogin(tdSource, version, user, pass)
-balance <- account$balance
-account <- getAccount(sessionid, brokerID, tdSource, sl)
-sl <- ""#
-ticker <- "AAPL"#
+interactivebroker <- 61330#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
 #
-  account <- getAccount(sessionid, brokerID, tdSource, sl)
-account
-50%/%10
-1/50
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$other <-other#
+data.zoo[1:193,"other"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$other#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg#
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad, other))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 47000#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$other <-other#
+data.zoo[1:193,"other"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$other#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg#
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad, other))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+help(plotOutput)
+library(htmltools)
+install.packages(htmltools)
+install.packages("htmltools")
+deployApp("openinterest")
+shinyapps::showLogs("openinterest")
+library(shiny)
 library(shiny)#
-#
+library(htmltools) #
 library(ggplot2)#
-library(RCurl)#
-library(jsonlite)#
-library(plyr)#
-source("./newOI/source/googleInput.R")#
+library(quantmod)#
+library(scales)#
+source("./source/googleInput.R")#
 doDebug <<- T#
-theN <- 30#
-theSize <- 12#
-#
-stripGoogleChain <- function(googChains) {#
-	if (doDebug) #
-		print("stripGoogleChain")#
-	print(names(googChains))#
+mergePutsCalls <- function(googChains) {#
+	if (doDebug) print("mergePutsCalls")#
 	optionMin <- subset(googChains, select = c(expiry, type, strike, open.interest))#
 	puts <- subset(optionMin, type == "Put")#
 	calls <- subset(optionMin, type == "Call")#
-	putCall <- merge(puts, calls, by = c("expiry", "strike"))#
+	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
 	putCall <- subset(putCall, select = -c(type.x, type.y))#
 	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
 	return(putCall)#
 }#
-getOneExpiration <- function(chain, exp = NULL) {#
-	if (doDebug) #
-		cat("getOneExpiration")#
-	if (is.null(exp)) #
-		exp <- chain[1, ]$expiry#
-	return(chain[(chain$expiry == exp), ])#
+getOneExpiration <- function(chains, expiry="", allExpiry=FALSE) {#
+	if (doDebug) print("getOneExpiration")#
+	if (expiry=="")#
+		expiry <- chains[1, ]$expiry#
+	if (!allExpiry){#
+		return(chains[(chains$expiry == expiry), ])#
+	} else {#
+		allChains <- subset(chains, select=-expiry)#
+		allChains <- aggregate(.~strike, data=allChains, sum)#
+		return(allChains)}#
 }#
-symbol <- "AAPL"#
-if (doDebug) #
-	cat("update")#
-googChains <- getOptionChainGoogle(ticker)#
-chains <- stripGoogleChain(googChains)#
-chain <- getOneExpiration(chains)#
-chain <- chain[(chain$expiry == expiry), ]#
-expiry <- "2015-08-21"
-getStrikes <- function(chain, percOfStrikes) {#
-	if (doDebug)#
-		print("getStrikes")#
-	if (doDebug) print(percOfStrikes)#
-	strikeRange <- 1/percOfStrikes*100#
-	if (doDebug) print(strikeRange)#
-	min <- chain[1, ]$strike#
-	max <- chain[nrow(chain), ]$strike#
-	mid <- nrow(chain)/2#
-	interval <- chain[mid + 1, ]$strike - chain[mid, ]$strike#
-	lower <- min + min%/% strikeRange#
-	print(lower)#
-	upper <- max - max%/% strikeRange#
-	strikes <- data.frame(min = min, max = max, upper = upper, lower = lower, #
-		interval = interval)#
-	return(strikes)#
+truncateChain <- function(chain, strikeData) {#
+	if (doDebug) print("truncateChain")#
+	chainx <- subset(chain, chain$strike>= strikeData$lower)#
+	chainy <- subset(chainx, chainx$strike <= strikeData$upper)#
+	return(chainy)#
+#
+}#
+useCumulative <- function(chain, strikeData) {#
+	if (doDebug) print("useCumulative")#
+#
+		chain <- truncateChain(chain, strikeData)#
+		chain$callOI <- cumsum(chain$callOI)#
+		chain$putOI <- rev(cumsum(rev(chain$putOI)))#
+#
+	return(chain)#
+}#
+getStrikes <- function(chain, inputStrikes, quote) {#
+	if (doDebug) print("getStrikes")#
+	strikeData <- tryCatch({#
+		midIndex <- which.min(abs(chain$strike-quote))#
+		lowerIndex <- midIndex - inputStrikes %/% 2#
+		upperIndex <- midIndex + inputStrikes %/% 2#
+		if (lowerIndex < 1) lowerIndex <- 1#
+		if (upperIndex > nrow(chain)) upperIndex <- nrow(chain)#
+		lower <- chain[lowerIndex,"strike"]#
+		upper <- chain[upperIndex,"strike"]#
+		range <- round(chain[lowerIndex:upperIndex,"strike"])#
+		list(upper = upper, lower = lower, range = range)#
+		},#
+	error = function(cond) {#
+		return(NULL)#
+	})#
+	if (is.null(strikeData)) #
+		return(NULL)#
+	else#
+		return(strikeData)#
+}#
+naToZero <- function(chain){#
+	try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)#
+	try(chain[is.na(chain$putOI),]$putOI <- 0, silent=T)#
+	return(chain)#
+}#
+#
+getQuote <- function(googChain) {#
+	quote <- tryCatch({#
+		reactive(round(googChains()[1,"underlying.price"], digits=3))#
+		},#
+		error = function(cond) {return(NULL)}#
+	)#
 }
-getStrikes(chain, 50)
+library(shiny)#
+library(ggplot2)#
+library(jsonlite)#
+setwd("~/ShinyApps/openinterest/")#
+#
+source("./source/googleInput.R")#
+input_ticker <- "AAPL"#
+input_ticker <- "NASDAQ:QQQ"#
+input_strikes <- 20#
+doDebug <<- T#
+theSize <- 12#
+allExpiration <- T#
+input_allStrikes <- F#
+#
+googChains <- getOptionChainGoogle(input_ticker)#
+input_expiry <- googChains[1, "expiry"]
+getQuote <- function(googChain) {#
+	quote <- tryCatch({#
+		reactive(round(googChains()[1,"underlying.price"], digits=3))#
+		},#
+		error = function(cond) {return(NULL)}#
+	)#
+	return(quote)#
+}
+quote <- getQuote(googChains())
 googChains
-tail(goodChains)
-tail(googChains)
-stripGoogleChain <- function(googChains) {#
-	if (doDebug) #
-		print("stripGoogleChain")#
-	optionMin <- subset(googChains, select = c(expiry, type, strike, #
-		open.interest))#
-	puts <- subset(optionMin, type == "Put")#
-	calls <- subset(optionMin, type == "Call")#
-	putCall <- merge(puts, calls, by = c("expiry", "strike"))#
-	putCall <- subset(putCall, select = -c(type.x, type.y))#
-	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
-	return(putCall)#
+getQuote <- function(googChains) {#
+	quote <- tryCatch({#
+		reactive(round(googChains[1,"underlying.price"], digits=3))#
+		},#
+		error = function(cond) {return(NULL)}#
+	)#
+	return(quote)#
 }
-tail(chains)
-getOneExpiration <- function(chain, exp = NULL) {#
-	if (doDebug) #
-		print("getOneExpiration")#
-	if (is.null(exp)) #
-		exp <- chain[1, ]$expiry#
-	return(chain[(chain$expiry == exp), ])#
+getQuote <- function(googChains) {#
+	quote = tryCatch({#
+		reactive(round(googChains[1,"underlying.price"], digits=3))#
+		},#
+		error = function(cond) {return(NULL)}#
+	)#
+	return(quote)#
 }
-exp <- chain[1, ]$expiry
-exp
-chain[(chain$expiry == exp), ]
-googChains <- getOptionChainGoogle(ticker)
-head(googChains,100)
-help(merge)
-stripGoogleChain <- function(googChains) {#
-	if (doDebug) #
-		print("stripGoogleChain")#
-	optionMin <- subset(googChains, select = c(expiry, type, strike, #
-		open.interest))#
-	puts <- subset(optionMin, type == "Put")#
-	calls <- subset(optionMin, type == "Call")#
-	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
-	putCall <- subset(putCall, select = -c(type.x, type.y))#
-	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
-	return(putCall)#
+getQuote <- function(googChains) {#
+	quote = tryCatch({ round(googChains[1,"underlying.price"], digits=3)},#
+			error = function(cond) return(NULL)#
+	)#
+	return(quote)#
 }
-googChains <- getOptionChainGoogle(ticker)#
-chains <- stripGoogleChain(googChains)#
-chain <- getOneExpiration(chains)#
-chain <- chain[(chain$expiry == expiry), ]
-strikes <- getStrikes(chain, 50)
-getOptionChainGoogle(sym)
-sym <- "AAPL"
-googChains <- getOptionChainGoogle(sym)
-chains <- stripGoogleChain(googChains)
-chain <- getOneExpiration(chains)
-help(pretty)
-if (doDebug) print(percOfStrikes)
-percOfStrikes
-percOfStrikes <- 50
-strikeRange <- 1/percOfStrikes*100
-strikeRange
-1/50*100
-100/50
-nrow(chain)
-interval
-getStrikes <- function(chain, strikesWanted) {#
-	if (doDebug)#
-		print("getStrikes")#
-	min <- chain[1, ]$strike#
-	max <- chain[nrow(chain), ]$strike#
+quote <- getQuote(googChains)
+getQuote(bad)
+input_ticker <- "bad"
+googChains <- getOptionChainGoogle(input_ticker)#
+input_expiry <- googChains[1, "expiry"]#
 #
-	mid <- nrow(chain)/2#
-	interval <- chain[mid + 1, ]$strike - chain[mid, ]$strike#
-	lower <- mid - strike %/% 2#
-	upper <- mid + strike %/% 2#
-	if (lower < 1) {lower <- 1}#
-	if (upper > nrow(chain)) {upper <- nrow(chain)}#
-	print("lower, upper")#
-	print(c(lower, upper))#
-	strikes <- data.frame(min = min, max = max, upper = upper, lower = lower, #
-		interval = interval)#
-	return(strikes)#
-}
-head(chains)
-getStrikes <- function(chain, strikesWanted) {#
-	if (doDebug)#
-		print("getStrikes")#
-	min <- chain[1, ]$strike#
-	max <- chain[nrow(chain), ]$strike#
-#
-	mid <- nrow(chain)/2#
-	interval <- chain[mid + 1, ]$strike - chain[mid, ]$strike#
-	lower <- mid - strikesWanted %/% 2#
-	upper <- mid + strikesWanted %/% 2#
-	if (lower < 1) {lower <- 1}#
-	if (upper > nrow(chain)) {upper <- nrow(chain)}#
-	print("lower, upper")#
-	print(c(lower, upper))#
-	strikes <- data.frame(min = min, max = max, upper = upper, lower = lower, #
-		interval = interval)#
-	return(strikes)#
-}
-strikesWanted <- 10
-min
-max
-mid <- nrow(chain)/2
-interval <- chain[mid + 1, ]$strike - chain[mid, ]$strike
-strikesWanted %/% 2
-mid <- nrow(chain)%/%2
-mid
-lower <- mid - strikesWanted %/% 2
-lower
-upper <- mid + strikesWanted %/% 2
-upper
-getStrikes <- function(chain, strikesWanted) {#
-	if (doDebug)#
-		print("getStrikes")#
-	min <- chain[1, ]$strike#
-	max <- chain[nrow(chain), ]$strike#
-#
-	midIndex <- nrow(chain)%/%2#
-	interval <- chain[mid + 1, ]$strike - chain[mid, ]$strike#
-	lowerIndex <- mid - strikesWanted %/% 2#
-	upperIndex <- mid + strikesWanted %/% 2#
-	if (lowerIndex < 1) {lowerIndex <- 1}#
-	if (upperIndex > nrow(chain)) {upperIndex <- nrow(chain)}#
-	lower <- chain(lowerIndex)#
-	upper <- chain(upperIndex)#
-	strikes <- data.frame(min = min, max = max, upper = upper, lower = lower, #
-		interval = interval)#
-	return(strikes)#
-}
-getStrikes
-min <- chain[1, ]$strike
-max <- chain[nrow(chain), ]$strike
-midIndex <- nrow(chain)%/%2#
-	interval <- chain[mid + 1, ]$strike - chain[mid, ]$strike#
-	lowerIndex <- mid - strikesWanted %/% 2#
-	upperIndex <- mid + strikesWanted %/% 2#
-	if (lowerIndex < 1) {lowerIndex <- 1}#
-	if (upperIndex > nrow(chain)) {upperIndex <- nrow(chain)}#
-	lower <- chain(lowerIndex)#
-	upper <- chain(upperIndex)#
-	strikes <- data.frame(min = min, max = max, upper = upper, lower = lower, #
-		interval = interval)
-getStrikes <- function(chain, strikesWanted) {#
-	if (doDebug)#
-		print("getStrikes")#
-	min <- chain[1, ]$strike#
-	max <- chain[nrow(chain), ]$strike#
-#
-	midIndex <- nrow(chain)%/%2#
-	interval <- chain[mid + 1, ]$strike - chain[mid, ]$strike#
-	lowerIndex <- mid - strikesWanted %/% 2#
-	upperIndex <- mid + strikesWanted %/% 2#
-	if (lowerIndex < 1) {lowerIndex <- 1}#
-	if (upperIndex > nrow(chain)) {upperIndex <- nrow(chain)}#
-	lower <- chain[lowerIndex,"strike"]#
-	upper <- chain[upperIndex,"strike"]#
-	strikes <- data.frame(min = min, max = max, upper = upper, lower = lower, #
-		interval = interval)#
-	return(strikes)#
-}
-getStrikes(chain,100)
-getStrikes(chain,10)
-x <- 2
-x <- 3
-if (x==3) print(x)
-if (lowerIndex < 1) lowerIndex <- 1
-if (upperIndex > nrow(chain)) upperIndex <- nrow(chain)
-head(chain)
-max(chain$callOI)
-chain[(chain$callOI+chain$putOI)==max(chain$callOI+chain$putOI),]
-row.names(chain[(chain$callOI+chain$putOI)==max(chain$callOI+chain$putOI),])
-row(chain[(chain$callOI+chain$putOI)==max(chain$callOI+chain$putOI),])
-which(chain[(chain$callOI+chain$putOI)==max(chain$callOI+chain$putOI),])
-cchain$callOI+chain$putOI)==max(chain$callOI+chain$putOI)
-(cchain$callOI+chain$putOI)==max(chain$callOI+chain$putOI)
-(chain$callOI+chain$putOI)==max(chain$callOI+chain$putOI)
-which.max(chain$callOI)
-midIndex <- which.max(chain$callOI+chain$putOI)
-which.max(chain$callOI+chain$putOI)
-help(which)
-help(updateTextInput)
-stripGoogleChain
-chains
-names(chains)
-googChains[1,"expiry"]
-names(googChains)
-head(googChains)
-x <- ""
-is.null(x)
-library(shiny)#
-library(shinyapps)#
-setwd("~/shinyapps/")#
-#
-options(shiny.reactlog=TRUE)#
-runApp("newOI")
-library("XML2R")#
-library("RCurl")#
-source("~/ShinyApps/tos/source/functions.R")#
-source("~/ShinyApps/tos/private/details.R")#
-#
-dDebug <<- F#
-quoteFile <- "~/ShinyApps/tos/out/quotes.csv"#
-#
-sessionid <- TDALogin("TSLU", "1.0", myLoginName, myPassWord)#
-#
-url = paste("https://apis.tdameritrade.com/apps/100/Quote;jsessionid=", sessionid,"?source=TSLU&symbol=", ticker, sep="" )#
-xmlResult = postForm(url,  style = "post")#
-theQuote <-xmlToList(gsub("-", ".", xmlResult)) #
-#
-if (is.null(theQuote$quote.list$quote$ask))#
-	theQuote$quote.list$quote$ask <- NA#
-if (is.null(theQuote$quote.list$quote$bid))#
-	theQuote$quote.list$quote$bid <- NA#
-if (is.null(theQuote$quote.list$quote$last))#
-	theQuote$quote.list$quote$last <- NA#
-if (is.null(theQuote$quote.list$quote$open))#
-	theQuote$quote.list$quote$open <- NA#
-if (is.null(theQuote$quote.list$quote$close))#
-	theQuote$quote.list$quote$close <- NA#
-quote.df <- with(theQuote$quote.list$quote, data.frame(time=Sys.time(), ticker=ticker,bid=bid,ask=ask,last=last, open=open,close=close))#
-write.table(quote.df,quoteFile, append=T, sep=",",row.names=F, col.names=F)
-library("XML2R")#
-library("RCurl")#
-source("~/ShinyApps/tosAsync/source/functions.R")#
-source("~/ShinyApps/tosAsync/private/details.R")#
-#
-dDebug <<- F#
-quoteFile <- "~/ShinyApps/tosAsync/out/quotes.csv"#
-#
-sessionid <- TDALogin("TSLU", "1.0", myLoginName, myPassWord)#
-#
-url = paste("https://apis.tdameritrade.com/apps/100/Quote;jsessionid=", sessionid,"?source=TSLU&symbol=", ticker, sep="" )#
-xmlResult = postForm(url,  style = "post")#
-theQuote <-xmlToList(gsub("-", ".", xmlResult)) #
-#
-if (is.null(theQuote$quote.list$quote$ask))#
-	theQuote$quote.list$quote$ask <- NA#
-if (is.null(theQuote$quote.list$quote$bid))#
-	theQuote$quote.list$quote$bid <- NA#
-if (is.null(theQuote$quote.list$quote$last))#
-	theQuote$quote.list$quote$last <- NA#
-if (is.null(theQuote$quote.list$quote$open))#
-	theQuote$quote.list$quote$open <- NA#
-if (is.null(theQuote$quote.list$quote$close))#
-	theQuote$quote.list$quote$close <- NA#
-quote.df <- with(theQuote$quote.list$quote, data.frame(time=Sys.time(), ticker=ticker,bid=bid,ask=ask,last=last, open=open,close=close))#
-write.table(quote.df,quoteFile, append=T, sep=",",row.names=F, col.names=F)
-library("XML2R")#
-library("RCurl")#
-source("~/ShinyApps/tosAsync/source/functions.R")#
-source("~/ShinyApps/tosAsync/private/details.R")#
-ticker <- "AAPL"#
-dDebug <<- F#
-quoteFile <- "~/ShinyApps/tosAsync/out/quotes.csv"#
-#
-sessionid <- TDALogin("TSLU", "1.0", myLoginName, myPassWord)#
-#
-url = paste("https://apis.tdameritrade.com/apps/100/Quote;jsessionid=", sessionid,"?source=TSLU&symbol=", ticker, sep="" )#
-xmlResult = postForm(url,  style = "post")#
-theQuote <-xmlToList(gsub("-", ".", xmlResult)) #
-#
-if (is.null(theQuote$quote.list$quote$ask))#
-	theQuote$quote.list$quote$ask <- NA#
-if (is.null(theQuote$quote.list$quote$bid))#
-	theQuote$quote.list$quote$bid <- NA#
-if (is.null(theQuote$quote.list$quote$last))#
-	theQuote$quote.list$quote$last <- NA#
-if (is.null(theQuote$quote.list$quote$open))#
-	theQuote$quote.list$quote$open <- NA#
-if (is.null(theQuote$quote.list$quote$close))#
-	theQuote$quote.list$quote$close <- NA#
-quote.df <- with(theQuote$quote.list$quote, data.frame(time=Sys.time(), ticker=ticker,bid=bid,ask=ask,last=last, open=open,close=close))#
-write.table(quote.df,quoteFile, append=T, sep=",",row.names=F, col.names=F)
-library("zoo")#
-#
-library("xts")#
-valueFile <- "/Volumes/superFly/Users/davidshanabrook/ShinyApps/tosAsync/out/value.csv"#
-data <- read.csv(valueFile)#
-data.zoo <- read.zoo(valueFile,format="%Y-%m-%d %H:%M:%S", header=T, sep=",")#
-data.xts <- as.xts(data.zoo)#
-data.zoo$all <- rowSums(data.zoo)#
-plot(data.zoo)#
-plot.zoo(data.xts)
-library("zoo")#
-#
-library("xts")#
-valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
-data <- read.csv(valueFile)#
-data.zoo <- read.zoo(valueFile,format="%Y-%m-%d %H:%M:%S", header=T, sep=",")#
-data.xts <- as.xts(data.zoo)#
-data.zoo$all <- rowSums(data.zoo)#
-plot(data.zoo)#
-plot.zoo(data.xts)
-getLastQuote <- function(sym){#
-	if (doDebug) print("getLastQuote")#
-	theQuote <- getQuote(sym)#
-	return(theQuote$Last)#
-}
-library(quantmod)
-getQuote
-getLastQuote("AAPL")
-help(linetype)
-deployApp("openinterest")
-getStrikes <- function(chain, strikesWanted, allStrikes=FALSE, quote, method="quote") {#
-	if (doDebug)#
-		print("getStrikes")#
-    if (method=="quote")#
-    		midIndex <- which.min(chain$strike-quote)#
-    	else#
-		midIndex <- which.max(chain$callOI+chain$putOI)#
-	lowerIndex <- midIndex - strikesWanted %/% 2#
-	upperIndex <- midIndex + strikesWanted %/% 2#
-	if (lowerIndex < 1) lowerIndex <- 1#
-	if ((upperIndex > nrow(chain))|allStrikes) upperIndex <- nrow(chain)#
-	lower <- chain[lowerIndex,"strike"]#
-	upper <- chain[upperIndex,"strike"]#
-	range <- chain[lowerIndex:upperIndex,"strike"]#
-	strikeData <- list(upper = upper, lower = lower, range = range)#
-	return(strikeData)#
-}
-library(shiny)#
-library(ggplot2)#
-library(jsonlite)#
-source("./openinterest/source/googleInput.R")#
-ticker <- "AAPL"#
-symbol <- ticker#
-inputstrikes <- 20#
-doDebug <<- T#
-theSize <- 12#
-allExpiration <- T#
-options(error = recover)#
-quote <- getAQuote(ticker)
-library(shiny)#
-library(ggplot2)#
-library(jsonlite)#
-library(quantmod)#
-source("source/googleInput.R")#
-doDebug <<- T#
-theSize <- 12#
-#
-getAQuote <- function(sym){#
-	if (doDebug) print("getLastQuote")#
-	theQuote <- getQuote(sym)#
-	return(theQuote$Last)#
-}#
-#
-mergePutsCalls <- function(googChains) {#
-	if (doDebug) #
-		print("mergePutsCalls")#
-	optionMin <- subset(googChains, select = c(expiry, type, strike, #
-		open.interest))#
-	puts <- subset(optionMin, type == "Put")#
-	calls <- subset(optionMin, type == "Call")#
-	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
-	putCall <- subset(putCall, select = -c(type.x, type.y))#
-	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
-	return(putCall)#
-}#
-getOneExpiration <- function(chains, exp = "",allExpiration=FALSE) {#
-	if (doDebug) #
-		print("getOneExpiration")#
-	if (exp=="")#
-		exp <- chains[1, ]$expiry#
-	if (!allExpiration){#
-		return(chains[(chains$expiry == exp), ])#
-	} else {#
-		return(chains)}#
-}#
-#
-getStrikes <- function(chain, strikesWanted, allStrikes=FALSE, quote, method="quote") {#
-	if (doDebug)#
-		print("getStrikes")#
-    if (method=="quote")#
-    		midIndex <- which.min(chain$strike-quote)#
-    	else#
-		midIndex <- which.max(chain$callOI+chain$putOI)#
-	lowerIndex <- midIndex - strikesWanted %/% 2#
-	upperIndex <- midIndex + strikesWanted %/% 2#
-	if (lowerIndex < 1) lowerIndex <- 1#
-	if ((upperIndex > nrow(chain))|allStrikes) upperIndex <- nrow(chain)#
-	lower <- chain[lowerIndex,"strike"]#
-	upper <- chain[upperIndex,"strike"]#
-	range <- chain[lowerIndex:upperIndex,"strike"]#
-	strikeData <- list(upper = upper, lower = lower, range = range)#
-	return(strikeData)#
-}
-library(shiny)#
-library(ggplot2)#
-library(jsonlite)#
-library(quantmod)#
-source("source/googleInput.R")#
-doDebug <<- T#
-theSize <- 12
-library(shiny)#
-library(ggplot2)#
-library(jsonlite)#
-library(quantmod)
-setwd("~/ShinyApps/openinterest/")
-source("source/googleInput.R")
-library(shiny)#
-library(ggplot2)#
-library(jsonlite)#
-library(quantmod)#
-setwd("~/ShinyApps/openinterest/")#
-source("source/googleInput.R")#
-doDebug <<- T#
-theSize <- 12#
-#
-getAQuote <- function(sym){#
-	if (doDebug) print("getLastQuote")#
-	theQuote <- getQuote(sym)#
-	return(theQuote$Last)#
-}#
-#
-mergePutsCalls <- function(googChains) {#
-	if (doDebug) #
-		print("mergePutsCalls")#
-	optionMin <- subset(googChains, select = c(expiry, type, strike, #
-		open.interest))#
-	puts <- subset(optionMin, type == "Put")#
-	calls <- subset(optionMin, type == "Call")#
-	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
-	putCall <- subset(putCall, select = -c(type.x, type.y))#
-	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
-	return(putCall)#
-}#
-getOneExpiration <- function(chains, exp = "",allExpiration=FALSE) {#
-	if (doDebug) #
-		print("getOneExpiration")#
-	if (exp=="")#
-		exp <- chains[1, ]$expiry#
-	if (!allExpiration){#
-		return(chains[(chains$expiry == exp), ])#
-	} else {#
-		return(chains)}#
-}#
-#
-getStrikes <- function(chain, strikesWanted, allStrikes=FALSE, quote, method="quote") {#
-	if (doDebug)#
-		print("getStrikes")#
-    if (method=="quote")#
-    		midIndex <- which.min(chain$strike-quote)#
-    	else#
-		midIndex <- which.max(chain$callOI+chain$putOI)#
-	lowerIndex <- midIndex - strikesWanted %/% 2#
-	upperIndex <- midIndex + strikesWanted %/% 2#
-	if (lowerIndex < 1) lowerIndex <- 1#
-	if ((upperIndex > nrow(chain))|allStrikes) upperIndex <- nrow(chain)#
-	lower <- chain[lowerIndex,"strike"]#
-	upper <- chain[upperIndex,"strike"]#
-	range <- chain[lowerIndex:upperIndex,"strike"]#
-	strikeData <- list(upper = upper, lower = lower, range = range)#
-	return(strikeData)#
-}
-library(shiny)#
-library(ggplot2)#
-library(jsonlite)#
-setwd("~/ShinyApps/openinterest/")#
-#
-source("source/googleInput.R")#
-ticker <- "AAPL"#
-symbol <- ticker#
-inputstrikes <- 20#
-doDebug <<- T#
-theSize <- 12#
-allExpiration <- T
-options(error = recover)#
-quote <- getAQuote(ticker)#
-googChains <- getOptionChainGoogle(ticker)
-googChains <- getOptionChainGoogle(ticker)#
-	chains <- mergePutsCalls(googChains)#
-	chain <- getOneExpiration(chains,"", allExpiration)#
-	strikes <- getStrikes(chain,inputstrikes, quote)
-chain$strike
-expiry <- googChains[1,"expiry"]
-chain <- getOneExpiration(chains,"", expiry)
+quote <- getQuote(googChains)
+quote
+chains <- mergePutsCalls(googChains)
+input_expiry
+chains[(chains$expiry == expiry)
+chains[(chains$expiry == expiry), ]
+chains <- NULL
+getOneExpiration(chains, input_expiry)
+expiry <- chains[1, ]$expiry
+if (expiry=="")#
+		expiry <- chains[1, ]$expiry
 expiry
-chain <- getOneExpiration(chains,expiry)
-chain
-chain$strike-quote
-abs(chain$strike-quote)
-which.min(abs(chain$strike-quote))
-midIndex <- which.min(abs(chain$strike-quote))
-midIndex
-lowerIndex <- midIndex - strikesWanted %/% 2
-inputstrikes <- 20
-inputStrikes <- 20
-lowerIndex <- midIndex - inputStrikes %/% 2
-upperIndex <- midIndex + inputStrikes %/% 2
-lowerIndex
-upperIndex
-allStrikes
-allStrikes=FALSE
-getStrikes <- function(chain, inputStrikes,  quote, allStrikes=FALSE, method="quote") {#
-	if (doDebug)#
-		print("getStrikes")#
-    if (method=="quote")#
-    		midIndex <- which.min(abs(chain$strike-quote))#
-    	else#
-		midIndex <- which.max(chain$callOI+chain$putOI)#
-	lowerIndex <- midIndex - inputStrikes %/% 2#
-	upperIndex <- midIndex + inputStrikes %/% 2#
-	if (lowerIndex < 1) lowerIndex <- 1#
-	if ((upperIndex > nrow(chain))|allStrikes) upperIndex <- nrow(chain)#
-	lower <- chain[lowerIndex,"strike"]#
-	upper <- chain[upperIndex,"strike"]#
-	range <- chain[lowerIndex:upperIndex,"strike"]#
-	strikeData <- list(upper = upper, lower = lower, range = range)#
-	return(strikeData)#
+chains[1, ]$expiry
+expiry==""
+getOneExpiration <- function(chains, expiry="", allExpiry=FALSE) {#
+	if (doDebug) print("getOneExpiration")#
+	if (is.null(expiry))#
+		return(NULL)#
+#
+	if (expiry=="")#
+		expiry <- chains[1, ]$expiry#
+	if (!allExpiry){#
+		return(chains[(chains$expiry == expiry), ])#
+	} else {#
+		allChains <- subset(chains, select=-expiry)#
+		allChains <- aggregate(.~strike, data=allChains, sum)#
+		return(allChains)}#
 }
-strikes
+chain1 <- getOneExpiration(chains, input_expiry)
+strikeData <- getStrikes(chain2, input_strikes, quote, input_allStrikes)
+chain <- useCummulative(chain2, strikeData)
+p <- ggplot(chain, aes(x = strike))
+p <- p + geom_area(aes(y = putOI, fill = "1 put", colour = "1 put", #
+	stat = "bin"), alpha = 0.5) + geom_area(aes(y = callOI, fill = "2 call", #
+	colour = "2 call", stat = "bin"), alpha = 0.5)#
+#
+p <- p + geom_point(aes(y = callOI), size = 1.5, alpha = 0.5, color = "blue") + #
+	geom_point(aes(y = putOI), size = 1.5, alpha = 0.5, color = "red")#
+#
+p <- p + scale_x_continuous(limits = c(strikeData$lower, strikeData$upper, #
+	breaks = strikeData$range))
+p <- p + theme(legend.title = element_blank()) + theme(axis.text.x = element_text(angle = 90, #
+	size = theSize))#
+p <- p + theme(panel.grid.minor.y = element_blank(), panel.grid.major.y = element_blank()) + #
+	theme(legend.justification = c(1, 1), legend.position = c(1, #
+		1)) + ylab("open interest")#
+p
+runApp("openinterest")
+rm(*.*)
+rm(ls(*.*))
+rm(ls)
+ls
+ls()
+rm(ls())
+help(rm)
+library(shiny)#
+library(htmltools) #
+library(ggplot2)#
+library(quantmod)#
+library(scales)#
+source("./source/googleInput.R")#
+doDebug <<- T#
+mergePutsCalls <- function(googChains) {#
+	if (doDebug) print("mergePutsCalls")#
+	optionMin <- subset(googChains, select = c(expiry, type, strike, open.interest))#
+	puts <- subset(optionMin, type == "Put")#
+	calls <- subset(optionMin, type == "Call")#
+	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
+	putCall <- subset(putCall, select = -c(type.x, type.y))#
+	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
+	return(putCall)#
+}#
+getOneExpiration <- function(chains, expiry="", allExpiry=FALSE) {#
+	if (doDebug) print("getOneExpiration")#
+	if (is.null(expiry))#
+		return(NULL)#
+#
+	if (expiry=="")#
+		expiry <- chains[1, ]$expiry#
+	if (!allExpiry){#
+		return(chains[(chains$expiry == expiry), ])#
+	} else {#
+		allChains <- subset(chains, select=-expiry)#
+		allChains <- aggregate(.~strike, data=allChains, sum)#
+		return(allChains)}#
+}#
+truncateChain <- function(chain, strikeData) {#
+	if (doDebug) print("truncateChain")#
+	chainx <- subset(chain, chain$strike>= strikeData$lower)#
+	chainy <- subset(chainx, chainx$strike <= strikeData$upper)#
+	return(chainy)#
+#
+}#
+useCumulative <- function(chain, strikeData) {#
+	if (doDebug) print("useCumulative")#
+#
+		chain <- truncateChain(chain, strikeData)#
+		chain$callOI <- cumsum(chain$callOI)#
+		chain$putOI <- rev(cumsum(rev(chain$putOI)))#
+#
+	return(chain)#
+}#
+getStrikes <- function(chain, inputStrikes, quote) {#
+	if (doDebug) print("getStrikes")#
+	strikeData <- tryCatch({#
+		midIndex <- which.min(abs(chain$strike-quote))#
+		lowerIndex <- midIndex - inputStrikes %/% 2#
+		upperIndex <- midIndex + inputStrikes %/% 2#
+		if (lowerIndex < 1) lowerIndex <- 1#
+		if (upperIndex > nrow(chain)) upperIndex <- nrow(chain)#
+		lower <- chain[lowerIndex,"strike"]#
+		upper <- chain[upperIndex,"strike"]#
+		range <- round(chain[lowerIndex:upperIndex,"strike"])#
+		list(upper = upper, lower = lower, range = range)#
+		},#
+	error = function(cond) {#
+		return(NULL)#
+	})#
+	if (is.null(strikeData)) #
+		return(NULL)#
+	else#
+		return(strikeData)#
+}#
+naToZero <- function(chain){#
+	chain <-try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)#
+	try(chain[is.na(chain$putOI),]$putOI <- 0, silent=T)#
+	return(chain)#
+}#
+#
+getQuote <- function(googChains) {#
+	quote = tryCatch({ round(googChains[1,"underlying.price"], digits=3)},#
+			error = function(cond) return(NULL)#
+	)#
+	return(quote)#
+}
+library(RCurl)#
+library(jsonlite)#
+library(plyr)#
+#
+getOptionChainGoogle = function(symbol, Exp="") {#
+  if (doDebug) print("getOptionChainGoogle")#
+  fixJSON = function(json){#
+    gsub('([^,{:]+):', '"\\1":', json)#
+  }#
+  URL1 = 'http://www.google.com/finance/option_chain?q=%s&output=json'#
+  URL2 = paste0(URL1, '&expy=%d&expm=%d&expd=%d')#
+  url = sprintf(URL1, symbol)#
+  chain = tryCatch({#
+  	fromJSON(fixJSON(getURL(url)))#
+  	},#
+  	error = function(cond) {#
+  		return(NULL)#
+  	}#
+  	)#
+  options = tryCatch({#
+  	mlply(chain$expirations, function(y, m, d) {#
+	    url = sprintf(URL2, symbol, y, m, d)#
+	    expiry = fromJSON(fixJSON(getURL(url)))#
+	    expiry$calls$type = "Call"#
+	    expiry$puts$type  = "Put"#
+	    prices = rbind(expiry$calls, expiry$puts)#
+	    prices$expiry = sprintf("%4d-%02d-%02d", y, m, d)#
+	    prices$underlying.price = expiry$underlying_price#
+	    prices$retrieved = Sys.time()#
+	    prices#
+  		})#
+  	},#
+  	error= function(cond) {#
+  		return(NULL)#
+  		}#
+  	)#
+	if (is.null(options)) #
+		return(NULL)#
+#
+  options = options[sapply(options, class) == "data.frame"]#
+  options = cbind(data.frame(symbol), rbind.fill(options))#
+  options = rename(options, c(p="premium", b="bid", a="ask", oi="open.interest"))#
+  for (col in c("strike", "premium", "bid", "ask"))#
+    options[, col] = suppressWarnings(as.numeric(options[, col]))#
+  options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))#
+  col.order = c("symbol", "type", "expiry", "strike", "premium",#
+                "bid", "ask", "open.interest", "retrieved", "underlying.price")#
+  options[, col.order]#
+}
+input_ticker <- "AAPL"#
+input_ticker <- "NASDAQ:QQQ"#
+input_ticker <- "bad"#
+input_strikes <- 20#
+input_expiry <- #
+doDebug <<- T#
+theSize <- 12#
+allExpiration <- T#
+input_allStrikes <- F#
+#
+googChains <- getOptionChainGoogle(input_ticker)
+mergePutsCalls <- function(googChains) {#
+	if (doDebug) print("mergePutsCalls")#
+	if (is.null(googChains)) return(NULL)#
+	optionMin <- subset(googChains, select = c(expiry, type, strike, open.interest))#
+	puts <- subset(optionMin, type == "Put")#
+	calls <- subset(optionMin, type == "Call")#
+	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
+	putCall <- subset(putCall, select = -c(type.x, type.y))#
+	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
+	return(putCall)#
+}
+naToZero <- function(chain){#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+#
+	chain <-try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)#
+	try(chain[is.na(chain$putOI),]$putOI <- 0, silent=T)#
+	return(chain)#
+}
+input_expiry <- googChains[1, "expiry"]#
+#
+quote <- getQuote(googChains)#
+expirations <- levels(as.factor(googChains[,"expiry"]))#
+chains <- mergePutsCalls(googChains)#
+chain1 <- getOneExpiration(chains, input_expiry)
+rm(list = ls())
+library(shiny)#
+library(htmltools) #
+library(ggplot2)#
+library(quantmod)#
+library(scales)#
+source("./source/googleInput.R")#
+doDebug <<- T#
+mergePutsCalls <- function(googChains) {#
+	if (doDebug) print("mergePutsCalls")#
+	if (is.null(googChains)) return(NULL)#
+	optionMin <- subset(googChains, select = c(expiry, type, strike, open.interest))#
+	puts <- subset(optionMin, type == "Put")#
+	calls <- subset(optionMin, type == "Call")#
+	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
+	putCall <- subset(putCall, select = -c(type.x, type.y))#
+	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
+	return(putCall)#
+}#
+getOneExpiration <- function(chains, expiry="", allExpiry=FALSE) {#
+	if (doDebug) print("getOneExpiration")#
+	if (is.null(expiry))#
+		return(NULL)#
+#
+	if (expiry=="")#
+		expiry <- chains[1, ]$expiry#
+	if (!allExpiry){#
+		return(chains[(chains$expiry == expiry), ])#
+	} else {#
+		allChains <- subset(chains, select=-expiry)#
+		allChains <- aggregate(.~strike, data=allChains, sum)#
+		return(allChains)}#
+}#
+truncateChain <- function(chain, strikeData) {#
+	if (doDebug) print("truncateChain")#
+	chainx <- subset(chain, chain$strike>= strikeData$lower)#
+	chainy <- subset(chainx, chainx$strike <= strikeData$upper)#
+	return(chainy)#
+#
+}#
+useCumulative <- function(chain, strikeData) {#
+	if (doDebug) print("useCumulative")#
+#
+		chain <- truncateChain(chain, strikeData)#
+		chain$callOI <- cumsum(chain$callOI)#
+		chain$putOI <- rev(cumsum(rev(chain$putOI)))#
+#
+	return(chain)#
+}#
+getStrikes <- function(chain, inputStrikes, quote) {#
+	if (doDebug) print("getStrikes")#
+	if (is.null(strikeData)) return(NULL)#
+		midIndex <- which.min(abs(chain$strike-quote))#
+		lowerIndex <- midIndex - inputStrikes %/% 2#
+		upperIndex <- midIndex + inputStrikes %/% 2#
+		if (lowerIndex < 1) lowerIndex <- 1#
+		if (upperIndex > nrow(chain)) upperIndex <- nrow(chain)#
+		lower <- chain[lowerIndex,"strike"]#
+		upper <- chain[upperIndex,"strike"]#
+		range <- round(chain[lowerIndex:upperIndex,"strike"])#
+		strikeData <- list(upper = upper, lower = lower, range = range)#
+#
+		return(strikeData)#
+}#
+naToZero <- function(chain){#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+#
+	chain <-try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)#
+	try(chain[is.na(chain$putOI),]$putOI <- 0, silent=T)#
+	return(chain)#
+}#
+#
+getQuote <- function(googChains) {#
+	quote = tryCatch({ round(googChains[1,"underlying.price"], digits=3)},#
+			error = function(cond) return(NULL)#
+	)#
+	return(quote)#
+}#
+#
+shinyServer(function(input, output, clientData, session) {#
+	if (doDebug) print("update")#
+	googChains <- reactive(withProgress(message="Getting data from Google", value=10,#
+		getOptionChainGoogle(input$ticker)))#
+	quote <- reactive(getQuote(googChains()))#
+	expirations <- reactive(levels(as.factor(googChains()[,"expiry"])))#
+	chains <- reactive(mergePutsCalls(googChains()))#
+	chain1 <- reactive(getOneExpiration(chains(),input$expiry,input$allExpiry))#
+	chain2 <- reactive(naToZero(chain1()))#
+	strikeData <- reactive(getStrikes(chain2(),input$strikes, quote()))#
+	chain <- reactive({#
+		if (input$graphType == "cumulative")#
+			useCumulative(chain2(),strikeData())#
+		else#
+			chain2()#
+			})#
+    observe(#
+   		updateSelectInput(session,"expiry",choices= expirations()))#
+	output$tickerText <- renderText({paste("Last quote ",input$ticker,": $", quote(), sep="")})#
+output$OIplot <- renderPlot({#
+withProgress(message="Now Plot the Data", value=10,{#
+	if (doDebug) print("oiPlot")#
+	p <- ggplot(chain(), aes(x = strike))#
+	p <- p + geom_vline(xintercept=quote(), linetype=3)#
+#
+	p <- p + geom_area(aes(y = putOI,  fill = "1 put",  stat = "bin"), alpha = 0.5)#
+	p <- p + geom_area(aes(y = callOI, fill = "2 call",  stat = "bin"), alpha = 0.5)#
+	p <- p + geom_point(aes(y = callOI), size = 1.5, alpha = 0.5, color = "blue", na.rm=T)#
+	p <- p + geom_point(aes(y = putOI),  size = 1.5, alpha = 0.5, color = "red", na.rm=T)#
+	p <- p + scale_x_continuous(limits = c(strikeData()$lower, strikeData()$upper), breaks = strikeData()$range) + scale_y_continuous(labels=comma) #
+	p <- p + theme(legend.title = element_blank())#
+	p <- p + theme(axis.text.x = element_text(angle = 90, size = 12))#
+	p <- p + theme(panel.grid.minor.y = element_blank(), panel.grid.major.y = element_blank())#
+	p <- p + theme(legend.justification = c(1, 1), legend.position = c(1, 1))#
+	p <- p + ylab("open interest")#
+	return(p)#
+	})	#
+	})#
+})
 library(shiny)#
 library(ggplot2)#
 library(jsonlite)#
 setwd("~/ShinyApps/openinterest/")#
 #
-source("source/googleInput.R")#
-ticker <- "AAPL"#
-symbol <- ticker#
-inputStrikes <- 20#
+source("./source/googleInput.R")#
+input_ticker <- "AAPL"#
+input_ticker <- "NASDAQ:QQQ"#
+input_ticker <- "bad"#
+input_strikes <- 20#
+input_expiry <- #
 doDebug <<- T#
 theSize <- 12#
 allExpiration <- T#
+input_allStrikes <- F
+googChains <- getOptionChainGoogle(input_ticker)#
+input_expiry <- googChains[1, "expiry"]#
 #
-quote <- getAQuote(ticker)#
-googChains <- getOptionChainGoogle(ticker)#
-	chains <- mergePutsCalls(googChains)#
-		expiry <- googChains[1,"expiry"]#
-	chain <- getOneExpiration(chains,expiry)
-getStrikes <- function(chain, inputStrikes,  quote, allStrikes=FALSE, method="quote") {#
-	if (doDebug)#
-		print("getStrikes")#
-    if ((method=="quote") & !allStrikes)#
-    		midIndex <- which.min(abs(chain$strike-quote))#
-    	else#
-		midIndex <- which.max(chain$callOI+chain$putOI)#
-	print(chain[midIndex,"strike"])#
-	lowerIndex <- midIndex - inputStrikes %/% 2#
-	upperIndex <- midIndex + inputStrikes %/% 2#
-	if (lowerIndex < 1) lowerIndex <- 1#
-	if ((upperIndex > nrow(chain))|allStrikes) upperIndex <- nrow(chain)#
-	lower <- chain[lowerIndex,"strike"]#
-	upper <- chain[upperIndex,"strike"]#
-	range <- chain[lowerIndex:upperIndex,"strike"]#
-	strikeData <- list(upper = upper, lower = lower, range = range)#
-	return(strikeData)#
+quote <- getQuote(googChains)#
+expirations <- levels(as.factor(googChains[,"expiry"]))#
+chains <- mergePutsCalls(googChains)#
+chain1 <- getOneExpiration(chains, input_expiry)#
+chain2 <- naToZero(chain1)#
+strikeData <- getStrikes(chain2, input_strikes, quote)
+library(shiny)#
+library(htmltools) #
+library(ggplot2)#
+library(quantmod)#
+library(scales)#
+source("./source/googleInput.R")#
+doDebug <<- T#
+mergePutsCalls <- function(googChains) {#
+	if (doDebug) print("mergePutsCalls")#
+	if (is.null(googChains)) return(NULL)#
+	optionMin <- subset(googChains, select = c(expiry, type, strike, open.interest))#
+	puts <- subset(optionMin, type == "Put")#
+	calls <- subset(optionMin, type == "Call")#
+	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
+	putCall <- subset(putCall, select = -c(type.x, type.y))#
+	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
+	return(putCall)#
+}#
+getOneExpiration <- function(chains, expiry="", allExpiry=FALSE) {#
+	if (doDebug) print("getOneExpiration")#
+	if (is.null(expiry))#
+		return(NULL)#
+#
+	if (expiry=="")#
+		expiry <- chains[1, ]$expiry#
+	if (!allExpiry){#
+		return(chains[(chains$expiry == expiry), ])#
+	} else {#
+		allChains <- subset(chains, select=-expiry)#
+		allChains <- aggregate(.~strike, data=allChains, sum)#
+		return(allChains)}#
+}#
+truncateChain <- function(chain, strikeData) {#
+	if (doDebug) print("truncateChain")#
+	chainx <- subset(chain, chain$strike>= strikeData$lower)#
+	chainy <- subset(chainx, chainx$strike <= strikeData$upper)#
+	return(chainy)#
+#
+}#
+useCumulative <- function(chain, strikeData) {#
+	if (doDebug) print("useCumulative")#
+#
+		chain <- truncateChain(chain, strikeData)#
+		chain$callOI <- cumsum(chain$callOI)#
+		chain$putOI <- rev(cumsum(rev(chain$putOI)))#
+#
+	return(chain)#
+}#
+getStrikes <- function(chain, inputStrikes, quote) {#
+	if (doDebug) print("getStrikes")#
+	if (is.null(chain)) return(NULL)#
+		midIndex <- which.min(abs(chain$strike-quote))#
+		lowerIndex <- midIndex - inputStrikes %/% 2#
+		upperIndex <- midIndex + inputStrikes %/% 2#
+		if (lowerIndex < 1) lowerIndex <- 1#
+		if (upperIndex > nrow(chain)) upperIndex <- nrow(chain)#
+		lower <- chain[lowerIndex,"strike"]#
+		upper <- chain[upperIndex,"strike"]#
+		range <- round(chain[lowerIndex:upperIndex,"strike"])#
+		strikeData <- list(upper = upper, lower = lower, range = range)#
+#
+		return(strikeData)#
+}#
+naToZero <- function(chain){#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+#
+	chain <-try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)#
+	try(chain[is.na(chain$putOI),]$putOI <- 0, silent=T)#
+	return(chain)#
+}#
+#
+getQuote <- function(googChains) {#
+	quote = tryCatch({ round(googChains[1,"underlying.price"], digits=3)},#
+			error = function(cond) return(NULL)#
+	)#
+	return(quote)#
+}#
+#
+shinyServer(function(input, output, clientData, session) {#
+	if (doDebug) print("update")#
+	googChains <- reactive(withProgress(message="Getting data from Google", value=10,#
+		getOptionChainGoogle(input$ticker)))#
+	quote <- reactive(getQuote(googChains()))#
+	expirations <- reactive(levels(as.factor(googChains()[,"expiry"])))#
+	chains <- reactive(mergePutsCalls(googChains()))#
+	chain1 <- reactive(getOneExpiration(chains(),input$expiry,input$allExpiry))#
+	chain2 <- reactive(naToZero(chain1()))#
+	strikeData <- reactive(getStrikes(chain2(),input$strikes, quote()))#
+	chain <- reactive({#
+		if (input$graphType == "cumulative")#
+			useCumulative(chain2(),strikeData())#
+		else#
+			chain2()#
+			})#
+    observe(#
+   		updateSelectInput(session,"expiry",choices= expirations()))#
+	output$tickerText <- renderText({paste("Last quote ",input$ticker,": $", quote(), sep="")})#
+output$OIplot <- renderPlot({#
+withProgress(message="Now Plot the Data", value=10,{#
+	if (doDebug) print("oiPlot")#
+	p <- ggplot(chain(), aes(x = strike))#
+	p <- p + geom_vline(xintercept=quote(), linetype=3)#
+#
+	p <- p + geom_area(aes(y = putOI,  fill = "1 put",  stat = "bin"), alpha = 0.5)#
+	p <- p + geom_area(aes(y = callOI, fill = "2 call",  stat = "bin"), alpha = 0.5)#
+	p <- p + geom_point(aes(y = callOI), size = 1.5, alpha = 0.5, color = "blue", na.rm=T)#
+	p <- p + geom_point(aes(y = putOI),  size = 1.5, alpha = 0.5, color = "red", na.rm=T)#
+	p <- p + scale_x_continuous(limits = c(strikeData()$lower, strikeData()$upper), breaks = strikeData()$range) + scale_y_continuous(labels=comma) #
+	p <- p + theme(legend.title = element_blank())#
+	p <- p + theme(axis.text.x = element_text(angle = 90, size = 12))#
+	p <- p + theme(panel.grid.minor.y = element_blank(), panel.grid.major.y = element_blank())#
+	p <- p + theme(legend.justification = c(1, 1), legend.position = c(1, 1))#
+	p <- p + ylab("open interest")#
+	return(p)#
+	})	#
+	})#
+})
+rm(list = ls())#
+library(shiny)#
+library(ggplot2)#
+library(jsonlite)#
+setwd("~/ShinyApps/openinterest/")#
+#
+source("./source/googleInput.R")#
+input_ticker <- "AAPL"#
+input_ticker <- "NASDAQ:QQQ"#
+input_ticker <- "bad"#
+input_strikes <- 20#
+input_expiry <- #
+doDebug <<- T#
+theSize <- 12#
+allExpiration <- T#
+input_allStrikes <- F#
+#
+googChains <- getOptionChainGoogle(input_ticker)#
+input_expiry <- googChains[1, "expiry"]#
+#
+quote <- getQuote(googChains)#
+expirations <- levels(as.factor(googChains[,"expiry"]))#
+chains <- mergePutsCalls(googChains)#
+chain1 <- getOneExpiration(chains, input_expiry)#
+chain2 <- naToZero(chain1)#
+strikeData <- getStrikes(chain2, input_strikes, quote)
+getQuote
+rm(list = ls())#
+library(shiny)#
+library(ggplot2)#
+library(jsonlite)#
+setwd("~/ShinyApps/openinterest/")#
+#
+source("./source/googleInput.R")#
+input_ticker <- "AAPL"#
+input_ticker <- "NASDAQ:QQQ"#
+input_ticker <- "bad"#
+input_strikes <- 20#
+input_expiry <- #
+doDebug <<- T#
+theSize <- 12#
+allExpiration <- T#
+input_allStrikes <- F#
+#
+googChains <- getOptionChainGoogle(input_ticker)#
+input_expiry <- googChains[1, "expiry"]#
+#
+quote <- getGoogleQuote(googChains)#
+expirations <- levels(as.factor(googChains[,"expiry"]))#
+chains <- mergePutsCalls(googChains)#
+chain1 <- getOneExpiration(chains, input_expiry)#
+chain2 <- naToZero(chain1)#
+strikeData <- getStrikes(chain2, input_strikes, quote)#
+chain <- useCummulative(chain2, strikeData)#
+#
+chain <- chain2#
+#
+selectInputChoices <- levels(as.factor(googChains[, "expiry"]))#
+p <- ggplot(chain, aes(x = strike))#
+p <- p + geom_area(aes(y = putOI, fill = "1 put", colour = "1 put", #
+	stat = "bin"), alpha = 0.5) + geom_area(aes(y = callOI, fill = "2 call", #
+	colour = "2 call", stat = "bin"), alpha = 0.5)#
+#
+p <- p + geom_point(aes(y = callOI), size = 1.5, alpha = 0.5, color = "blue") + #
+	geom_point(aes(y = putOI), size = 1.5, alpha = 0.5, color = "red")#
+#
+p <- p + scale_x_continuous(limits = c(strikeData$lower, strikeData$upper, #
+	breaks = strikeData$range))#
+p <- p + theme(legend.title = element_blank()) + theme(axis.text.x = element_text(angle = 90, #
+	size = theSize))#
+p <- p + theme(panel.grid.minor.y = element_blank(), panel.grid.major.y = element_blank()) + #
+	theme(legend.justification = c(1, 1), legend.position = c(1, #
+		1)) + ylab("open interest")#
+p
+doDebug <<- T#
+mergePutsCalls <- function(googChains) {#
+	if (doDebug) print("mergePutsCalls")#
+	if (is.null(googChains)) return(NULL)#
+	optionMin <- subset(googChains, select = c(expiry, type, strike, open.interest))#
+	puts <- subset(optionMin, type == "Put")#
+	calls <- subset(optionMin, type == "Call")#
+	putCall <- merge(puts, calls, by = c("expiry", "strike"), sort=F)#
+	putCall <- subset(putCall, select = -c(type.x, type.y))#
+	names(putCall) <- c("expiry", "strike", "putOI", "callOI")#
+	return(putCall)#
+}#
+getOneExpiration <- function(chains, expiry="", allExpiry=FALSE) {#
+	if (doDebug) print("getOneExpiration")#
+	if (is.null(expiry))#
+		return(NULL)#
+#
+	if (expiry=="")#
+		expiry <- chains[1, ]$expiry#
+	if (!allExpiry){#
+		return(chains[(chains$expiry == expiry), ])#
+	} else {#
+		allChains <- subset(chains, select=-expiry)#
+		allChains <- aggregate(.~strike, data=allChains, sum)#
+		return(allChains)}#
+}#
+truncateChain <- function(chain, strikeData) {#
+	if (doDebug) print("truncateChain")#
+	chainx <- subset(chain, chain$strike>= strikeData$lower)#
+	chainy <- subset(chainx, chainx$strike <= strikeData$upper)#
+	return(chainy)#
+#
+}#
+useCumulative <- function(chain, strikeData) {#
+	if (doDebug) print("useCumulative")#
+#
+		chain <- truncateChain(chain, strikeData)#
+		chain$callOI <- cumsum(chain$callOI)#
+		chain$putOI <- rev(cumsum(rev(chain$putOI)))#
+#
+	return(chain)#
+}#
+getStrikes <- function(chain, inputStrikes, quote) {#
+	if (doDebug) print("getStrikes")#
+	if (is.null(chain)) return(NULL)#
+		midIndex <- which.min(abs(chain$strike-quote))#
+		lowerIndex <- midIndex - inputStrikes %/% 2#
+		upperIndex <- midIndex + inputStrikes %/% 2#
+		if (lowerIndex < 1) lowerIndex <- 1#
+		if (upperIndex > nrow(chain)) upperIndex <- nrow(chain)#
+		lower <- chain[lowerIndex,"strike"]#
+		upper <- chain[upperIndex,"strike"]#
+		range <- round(chain[lowerIndex:upperIndex,"strike"])#
+		strikeData <- list(upper = upper, lower = lower, range = range)#
+#
+		return(strikeData)#
+}#
+naToZero <- function(chain){#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+#
+	chain <-try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)#
+	try(chain[is.na(chain$putOI),]$putOI <- 0, silent=T)#
+	return(chain)#
+}#
+#
+getGoogleQuote <- function(googChains) {#
+	quote = tryCatch({ round(googChains[1,"underlying.price"], digits=3)},#
+			error = function(cond) return(NULL)#
+	)#
+	return(quote)#
 }
-strikes <- getStrikes(chain,inputstrikes, quote)
+quote <- getGoogleQuote(googChains)#
+expirations <- levels(as.factor(googChains[,"expiry"]))#
+chains <- mergePutsCalls(googChains)#
+chain1 <- getOneExpiration(chains, input_expiry)#
+chain2 <- naToZero(chain1)
+strikeData <- getStrikes(chain2, input_strikes, quote)
+strikeData
+rm(list = ls())#
+library(shiny)#
+library(ggplot2)#
+library(jsonlite)#
+setwd("~/ShinyApps/openinterest/")#
+#
+source("./source/googleInput.R")#
+input_ticker <- "AAPL"#
+input_ticker <- "NASDAQ:QQQ"#
+input_ticker <- "bad"#
+input_strikes <- 20#
+input_expiry <- #
+doDebug <<- T#
+theSize <- 12#
+allExpiration <- T#
+input_allStrikes <- F
+input_ticker
+symbol="bad"
+URL1 = 'http://www.google.com/finance/option_chain?q=%s&output=json'
+URL2 = paste0(URL1, '&expy=%d&expm=%d&expd=%d')
+url = sprintf(URL1, symbol)
+url
+is.null(options)
+input_ticker <- "AAPL"
+symbol <- input_ticker
+URL1 = 'http://www.google.com/finance/option_chain?q=%s&output=json'#
+  URL2 = paste0(URL1, '&expy=%d&expm=%d&expd=%d')#
+  url = sprintf(URL1, symbol)#
+  chain = tryCatch({#
+  	fromJSON(fixJSON(getURL(url)))},#
+  	error = function(cond) {return(NULL)})
+options = options[sapply(options, class) == "data.frame"]
+options = cbind(data.frame(symbol), rbind.fill(options))
+options = rename(options, c(p="premium", b="bid", a="ask", oi="open.interest"))
+for (col in c("strike", "premium", "bid", "ask"))#
+    options[, col] = suppressWarnings(as.numeric(options[, col]))
+options[, "open.interest"] = suppressWarnings(as.integer(options[, "open.interest"]))
+col.order = c("symbol", "type", "expiry", "strike", "premium",#
+                "bid", "ask", "open.interest", "retrieved", "underlying.price")
+options[, col.order]
+chain <- options[, col.order]
+democratOct13 <- "data/democratic13Oct2015.txt"#
+democratNov13 <- "data/democratic13nov2015.txt"#
+republicanAug6 <- "data/republican6Aug2015.txt"#
+republicanSept16 <- "data/republican16Sept2015.txt"#
+republicanOct28 <- "data/republican28Oct2015.txt"#
+republicanNov10 <- "data/republican10Nov2015.txt"#
+#
+getSpeaker <- function(theSpeakers= democraticSpeakers, debate) {#
+	text <- debate[debate$speaker %in% theSpeakers,]$text#
+	text <- paste(text,collapse=" ")#
+	return(text)#
+}#
+getADebate <- function(theFile) {#
+	aDebate <- readLines(theFile)#
+	aDebate <- data.frame(text = aDebate, stringsAsFactors=F)#
+	return(aDebate)#
+}#
+#
+findTheSpeakers <- function(debate){#
+	personPatt <- "^[A-Z']*:"#
+	x <- gregexpr(personPatt, debate$text)#
+	debate$speaker <- regmatches(debate$text, x)#
+	return(debate)#
+}#
+makeSpeakerColumn <- function(debate) {#
+		personPatt <- "^[A-Z']*:"#
+	debate$speaker <- lapply(debate$speaker, function(x) ifelse(is.null(x), #
+		NA, x))#
+	debate$speaker <- unlist(debate$speaker)#
+	debate$text <- gsub(personPatt, "", debate$text)#
+	library(tidyr)#
+	debate <- fill(debate, speaker)#
+	debate$speaker <- as.factor(debate$speaker)#
+	return(debate)#
+}#
+#
+debate <- getADebate(democratOct13)#
+debate1 <- getADebate(democratNov13)#
+debate2 <- getADebate(republicanAug6)#
+debate3 <- getADebate(republicanSept16)#
+debate4 <- getADebate(republicanOct28)#
+debate5 <- getADebate(republicanNov10)#
+#
+debate <- rbind(debate,debate2,debate3,debate4,debate5)#
+debate <- findTheSpeakers(debate)#
+debate <- makeSpeakerColumn(debate)#
+summary(debate$speaker)#
+democraticSpeakers <- c("CLINTON:","SANDERS:","DICKERSON:", "O'MALLEY:","WEBB:")#
+democrat <- getSpeaker(democraticSpeakers,debate)#
+republicanSpeakers <- c( "BUSH:", "CARSON:", "CHAFEE:", "CHRISTIE:", "COOPER:", "CRUZ:", "FIORINA:", "HUCKABEE:", "KASICH:",  "PAUL:", "PERRY:", "RUBIO:", "TRUMP:", "WALKER:")#
+republican <- getSpeaker(republicanSpeakers, debate)#
+clinton <- getSpeaker("CLINTON:", debate)#
+sanders <- getSpeaker("SANDERS:", debate)#
+write(democrat, file="data/democrat")#
+write(republican, file="data/republican")
+setwd("./ShinyApps/debates/")
+setwd("~/ShinyApps/debates/")
+setwd("~/ShinyApps/debates/")#
+democratOct13 <- "data/democratic13Oct2015.txt"#
+democratNov13 <- "data/democratic13nov2015.txt"#
+republicanAug6 <- "data/republican6Aug2015.txt"#
+republicanSept16 <- "data/republican16Sept2015.txt"#
+republicanOct28 <- "data/republican28Oct2015.txt"#
+republicanNov10 <- "data/republican10Nov2015.txt"#
+#
+getSpeaker <- function(theSpeakers= democraticSpeakers, debate) {#
+	text <- debate[debate$speaker %in% theSpeakers,]$text#
+	text <- paste(text,collapse=" ")#
+	return(text)#
+}#
+getADebate <- function(theFile) {#
+	aDebate <- readLines(theFile)#
+	aDebate <- data.frame(text = aDebate, stringsAsFactors=F)#
+	return(aDebate)#
+}#
+#
+findTheSpeakers <- function(debate){#
+	personPatt <- "^[A-Z']*:"#
+	x <- gregexpr(personPatt, debate$text)#
+	debate$speaker <- regmatches(debate$text, x)#
+	return(debate)#
+}#
+makeSpeakerColumn <- function(debate) {#
+		personPatt <- "^[A-Z']*:"#
+	debate$speaker <- lapply(debate$speaker, function(x) ifelse(is.null(x), #
+		NA, x))#
+	debate$speaker <- unlist(debate$speaker)#
+	debate$text <- gsub(personPatt, "", debate$text)#
+	library(tidyr)#
+	debate <- fill(debate, speaker)#
+	debate$speaker <- as.factor(debate$speaker)#
+	return(debate)#
+}#
+#
+debate <- getADebate(democratOct13)#
+debate1 <- getADebate(democratNov13)#
+debate2 <- getADebate(republicanAug6)#
+debate3 <- getADebate(republicanSept16)#
+debate4 <- getADebate(republicanOct28)#
+debate5 <- getADebate(republicanNov10)#
+#
+debate <- rbind(debate,debate2,debate3,debate4,debate5)#
+debate <- findTheSpeakers(debate)#
+debate <- makeSpeakerColumn(debate)#
+summary(debate$speaker)#
+democraticSpeakers <- c("CLINTON:","SANDERS:","DICKERSON:", "O'MALLEY:","WEBB:")#
+democrat <- getSpeaker(democraticSpeakers,debate)#
+republicanSpeakers <- c( "BUSH:", "CARSON:", "CHAFEE:", "CHRISTIE:", "COOPER:", "CRUZ:", "FIORINA:", "HUCKABEE:", "KASICH:",  "PAUL:", "PERRY:", "RUBIO:", "TRUMP:", "WALKER:")#
+republican <- getSpeaker(republicanSpeakers, debate)#
+clinton <- getSpeaker("CLINTON:", debate)#
+sanders <- getSpeaker("SANDERS:", debate)#
+write(democrat, file="data/democrat")#
+write(republican, file="data/republican")
+cutoffWordFr <- 15#
+outlierLimit <- 23#
+{#
+	names(corpus.df) <- c("rightText", "leftText")#
+	sizeFactor <- sum(corpus.df$leftText)/sum(corpus.df$rightText)#
+	corpus.df <- subset(corpus.df, (rightText + leftText) > cutoffWordFr)#
+	corpus.df$rightText <- round(corpus.df$rightText * sizeFactor)#
+	corpus.df <- transform(corpus.df, freq.dif = rightText - leftText)#
+	corpus.df[(abs(corpus.df$freq.dif)<=1),]$freq.dif <- 0#
+	}
+setwd("~/ShinyApps/debates")#
+#
+{#
+	library(tm)#
+	library(ggplot2)#
+	library(gdata)#
+	source("~/Documents/r/functions/sort.data.frame.R")#
+	source("source/preprocessDebateText.R")#
+}#
+specialWords <- c("anderson","applause","governor")#
+optimal.spacing <- function(spaces) {#
+	if (spaces > 1) {#
+		spacing <- 1/spaces#
+		if (spaces%%2 > 0) {#
+			lim <- spacing * floor(spaces/2)#
+			return(seq(-lim, lim, spacing))#
+		} else {#
+			lim <- spacing * (spaces - 1)#
+			return(seq(-lim, lim, spacing * 2))#
+		}#
+	} else {#
+		return(0)#
+	}#
+}#
+#
+rightDoc <- republican#
+leftDoc <- democrat#
+docs <- c(rightDoc, leftDoc)#
+vs <- VectorSource(docs)#
+corpus <- Corpus(vs)#
+#
+{#
+	corpus <- tm_map(corpus, content_transformer(tolower))#
+	corpus <- tm_map(corpus, function(x) removeWords(x, stopwords("english")))#
+	corpus <- tm_map(corpus, removePunctuation)#
+	corpus <- tm_map(corpus, PlainTextDocument)#
+	corpus <- tm_map(corpus, function(x) removeWords(x, specialWords))#
+}#
+#
+{#
+	corpus.matrix <- TermDocumentMatrix(corpus)#
+	sink(file = "temp")#
+	corpus.df <- as.data.frame(inspect(corpus.matrix))#
+	sink()#
+	}#
+source("source/fgraphing.R")
+cutoffWordFr <- 15#
+outlierLimit <- 23#
+{#
+	names(corpus.df) <- c("rightText", "leftText")#
+	sizeFactor <- sum(corpus.df$leftText)/sum(corpus.df$rightText)#
+	corpus.df <- subset(corpus.df, (rightText + leftText) > cutoffWordFr)#
+	corpus.df$rightText <- round(corpus.df$rightText * sizeFactor)#
+	corpus.df <- transform(corpus.df, freq.dif = rightText - leftText)#
+	corpus.df[(abs(corpus.df$freq.dif)<=1),]$freq.dif <- 0#
+	}#
+#
+{#
+	outlierLimit <- 15#
+	table(corpus.df$freq.dif)#
+	corpus.df[(corpus.df$freq.dif < -outlierLimit), ]$freq.dif <- -outlierLimit#
+	corpus.df[(corpus.df$freq.dif > outlierLimit), ]$freq.dif <- outlierLimit#
+	table(corpus.df$freq.dif)#
+}#
+#
+{#
+maxDiff <- 0#
+minDiff <-0#
+rightTextdf <- subset(corpus.df, freq.dif > maxDiff) #
+leftTextdf <- subset(corpus.df, freq.dif < minDiff) #
+equaldf <- subset(corpus.df, (freq.dif >= maxDiff & freq.dif <= #
+	minDiff)) #
+#
+rightText.spacing <- sapply(table(rightTextdf$freq.dif), function(x) optimal.spacing(x))#
+leftText.spacing <- sapply(table(leftTextdf$freq.dif), function(x) optimal.spacing(x))#
+equal.spacing <- sapply(table(equaldf$freq.dif), function(x) optimal.spacing(x))#
+rightText.optim <- rep(0, nrow(rightTextdf))#
+for (n in names(rightText.spacing)) {#
+	rightText.optim[which(rightTextdf$freq.dif == as.numeric(n))]<-rightText.spacing[[n]]#
+	}#
+rightTextdf <- transform(rightTextdf, Spacing = rightText.optim)#
+#
+leftText.optim <- rep(0, nrow(leftTextdf))#
+for (n in names(leftText.spacing)) {#
+	leftText.optim[which(leftTextdf$freq.dif == as.numeric(n))]<- leftText.spacing[[n]]#
+	}#
+leftTextdf <- transform(leftTextdf, Spacing = leftText.optim)#
+#
+equaldf$Spacing <- as.vector(equal.spacing)#
+}#
+#
+{#
+	labelEqu <- "Said Equally"#
+	labelPos <- "Republican"#
+	labelNeg <- "Democrat"#
+	labTitle <- paste("Debate Cloud:", labelNeg, "vs", labelPos, sep = " ")#
+}#
+#
+{#
+	jitterParm <- position_jitter(w = 0.1, h = 0.1)#
+	p1 <- ggplot(rightTextdf, aes(x = freq.dif, y = Spacing)) +  #
+		geom_text(position = jitterParm, aes(size = rightText, label = row.names(rightTextdf), colour = freq.dif)) + #
+		geom_text(data = leftTextdf, position = jitterParm, aes(x = freq.dif, y = Spacing, label = row.names(leftTextdf), size = leftText, color = freq.dif)) + #
+		geom_text(data = equaldf, aes(x = freq.dif, y = Spacing, label = row.names(equaldf), size = rightText, color = freq.dif)) + scale_size(range = c(3, 13), name = "word frequency") + #
+		scale_colour_gradient(low = "blue", high = "red", guide = "none") + #
+		scale_x_continuous(breaks = c(min(leftTextdf$freq.dif), 0, max(rightTextdf$freq.dif)), labels = c(labelNeg, labelEqu, labelPos)) + #
+		scale_y_continuous(breaks = c(0), expand=c(0,0.1),  labels = c("")) + #
+		xlab("") + ylab("") + labs(title = labTitle) + xlab("") + #
+		ylab("")#
+#
+	p1 + theme_bw()  #
+}
+library(rvest)#
+library(plyr)#
+library(dplyr)#
+library(stringi)#
+library(magrittr)#
+MakeDebateDF<-function(df){#
+  newdf <- data.frame(#
+    person = apply(df, #
+                   MARGIN = 1, #
+                   function(x){#
+                     stri_extract_first_regex(x, #
+                                              "[A-Z'-]+(?=(:\\s))")#
+                   }),#
+    message = apply(df, #
+                    MARGIN = 1, #
+                    function(x){#
+                      stri_replace_first_regex(x,#
+                                               "[A-Z'-]+:\\s+", #
+                                               "")#
+                    }),#
+    stringsAsFactors=FALSE#
+  )#
+  for (j in 2:nrow(newdf)) { #
+  if (is.na(newdf[j,'person'])) #
+		{newdf[j,'person'] <-  newdf[(j-1),'person'] }#
+	}#
+#
+  return(newdf)#
+}
+url <- "http://www.presidency.ucsb.edu/ws/index.php?pid="
+lasvegas <- "111177"
+debate_v <- read_html(paste0(url, lasvegas)) %>%
+html_nodes("p") %>%
+html_text()
+??html_text
+library(rvest)
+install.packages(rvest)
+install.packages("rvest")
+library(rvest)#
+library(plyr)#
+library(dplyr)#
+library(stringi)#
+library(magrittr)#
+MakeDebateDF<-function(df){#
+  newdf <- data.frame(#
+    person = apply(df, #
+                   MARGIN = 1, #
+                   function(x){#
+                     stri_extract_first_regex(x, #
+                                              "[A-Z'-]+(?=(:\\s))")#
+                   }),#
+    message = apply(df, #
+                    MARGIN = 1, #
+                    function(x){#
+                      stri_replace_first_regex(x,#
+                                               "[A-Z'-]+:\\s+", #
+                                               "")#
+                    }),#
+    stringsAsFactors=FALSE#
+  )#
+  for (j in 2:nrow(newdf)) { #
+  if (is.na(newdf[j,'person'])) #
+		{newdf[j,'person'] <-  newdf[(j-1),'person'] }#
+	}#
+#
+  return(newdf)#
+}#
+url <- "http://www.presidency.ucsb.edu/ws/index.php?pid="#
+lasvegas <- "111177"#
+#
+debate_v <- read_html(paste0(url, lasvegas)) %>% #
+  html_nodes("p") %>%#
+  html_text()#
+#
+debate_v <- ldply(debate_v, rbind)#
+debate_v <- MakeDebateDF(debate_v)
+debate_v
+library(rvest)#
+library(plyr)#
+library(dplyr)#
+library(stringi)#
+library(magrittr)#
+MakeDebateDF<-function(df){#
+  newdf <- data.frame(#
+    person = apply(df, #
+                   MARGIN = 1, #
+                   function(x){#
+                     stri_extract_first_regex(x, #
+                                              "[A-Z'-]+(?=(:\\s))")#
+                   }),#
+    message = apply(df, #
+                    MARGIN = 1, #
+                    function(x){#
+                      stri_replace_first_regex(x,#
+                                               "[A-Z'-]+:\\s+", #
+                                               "")#
+                    }),#
+    stringsAsFactors=FALSE#
+  )#
+  for (j in 2:nrow(newdf)) { #
+  if (is.na(newdf[j,'person'])) #
+		{newdf[j,'person'] <-  newdf[(j-1),'person'] }#
+	}#
+#
+  return(newdf)#
+}#
+url <- "http://www.presidency.ucsb.edu/ws/index.php?pid="#
+lasvegas <- "111177"#
+#
+debate_v <- read_html(paste0(url, lasvegas)) %>% #
+  html_nodes("p") %>%#
+  html_text()#
+#
+debate_v <- ldply(debate_v, rbind)#
+debate_v <- MakeDebateDF(debate_v)#
+all_debates <- rbind(debate_w, #
+                     debate_b,#
+                     debate_c,#
+                     debate_h)#
+library(ggplot2)#
+library(eem)#
+#
+trump_words <- apply(subset(all_debates, person == "TRUMP")['message'],#
+                    1,#
+                    paste)#
+#
+trump_cloud <- rquery.wordcloud(trump_words, #
+    "text", #
+    max.words = 300,#
+    excludeWords = c("going","and",#
+                    "applause","get",#
+                    "got","let"))#
+#
+trump_freq <- trump_cloud$freqTable#
+trump_top <- ggplot(order_axis(#
+      trump_freq[1:10,],#
+        word, freq), #
+      aes(x = word_o, #
+          y = freq))+#
+    geom_bar(stat="identity",#
+              fill = eem_colors[1]) +#
+    theme_eem() + #
+    labs(title = "Top 10 words in Debates \n Donald Trump", #
+          x = "Word",#
+          y = "Frequency")
+install.packages("eem")
+devtools::install_github("eflores/eem")
 library(shiny)#
 library(shinyapps)#
-setwd("~/shinyapps/")#
+setwd("~/ShinyApps")#
+runApp("debates")
+rm(list=ls())
+rm(list = ls())#
+library(shiny)#
+library(ggplot2)#
+library(quantmod)#
+library(scales)#
 #
-options(shiny.reactlog=TRUE)#
+setwd("~/ShinyApps/openinterest/")#
+#
+source("./source/googleInput.R")#
+input_ticker <- "AAPL"#
+input_ticker <- "NASDAQ:QQQ"#
+input_ticker <- "bad"#
+symbol <- input_ticker#
+input_strikes <- 20#
+input_expiry <- ""#
+doDebug <<- T#
+theSize <- 12#
+allExpiration <- T#
+input_allStrikes <- F
+rm(list = ls())#
+library(shiny)#
+library(ggplot2)#
+library(quantmod)#
+library(scales)#
+#
+setwd("~/ShinyApps/openinterest/")#
+#
+source("./source/googleInput.R")#
+source("./source/functions.R")#
+#
+input_ticker <- "AAPL"#
+symbol <- input_ticker#
+input_strikes <- 20#
+input_expiry <- ""#
+doDebug <<- T#
+theSize <- 12#
+allExpiration <- T#
+input_allStrikes <- F
+googChains <- getOptionChainGoogle(input_ticker)
+input_expiry <- googChains[1, "expiry"]
+quote <- getGoogleQuote(googChains)
+expirations <- levels(as.factor(googChains[,"expiry"]))
+chains <- mergePutsCalls(googChains)#
+chain1 <- getOneExpiration(chains, input_expiry)#
+chain2 <- naToZero(chain1)#
+strikeData <- getStrikes(chain2, input_strikes, quote)
+chain <- chain2
+if (is.null(chain)) return(NULL)
+midIndex <- which.min(abs(chain$strike-quote))
+head(googChains)
+head(quote)
+expirations
+chains
+chains1
+chian2
+chain <-try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)
+naToZero <- function(chain){#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+#
+	chain <-try(chain[is.na(chain$callOI),]$callOI <- 0, silent=T)#
+	chain <- try(chain[is.na(chain$putOI),]$putOI <- 0, silent=T)#
+	return(chain)#
+}
+chain2 <- naToZero(chain1)
+chain2
+naToZero <- function(chain){#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+#
+	chain[is.na(chain$callOI),]$callOI <- 0#
+	chain[is.na(chain$putOI),]$putOI <- 0#
+	return(chain)#
+}
+chain1
+chain[is.na(chain$callOI),]$callOI <- 0
+chain
+chain[is.na(chain$callOI),]$callOI
+head(chain)
+is.na(chain$callOI)
+help(subset)
+naCalls <- is.na(chain$callOI)#
+	naPuts <- is.na(chain$putOI)
+naCalls
+naPuts
+naToZero <- function(chain){#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+	naCalls <- is.na(chain$callOI)#
+	naPuts <- is.na(chain$putOI)#
+	chain[naCalls]$callOI <- 0#
+	chain[naPuts]$putOI <- 0#
+	return(chain)#
+}
+chain <- chain1
+naCalls <- is.na(chain$callOI)
+naPuts <- is.na(chain$putOI)
+chain[naCalls]$callOI
+try(chain[naCalls]$callOI <- 0, silent=T)#
+	try(chain[naPuts]$putOI <- 0, silent=T)
+try(chain[naCalls]$callOI <- 0, silent=T)
+help(try)
+naToZero <- function(chain){#
+	options(warn=F)#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+	naCalls <- is.na(chain$callOI)#
+	naPuts <- is.na(chain$putOI)#
+	try(chain[naCalls]$callOI <- 0, silent=T)#
+	try(chain[naPuts]$putOI <- 0, silent=T)#
+	options(warn=T)#
+	return(chain)#
+}
+options(warning=F)
+naToZero <- function(chain){#
+	options(warning=F)#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+	naCalls <- is.na(chain$callOI)#
+	naPuts <- is.na(chain$putOI)#
+	try(chain[naCalls]$callOI <- 0, silent=T)#
+	try(chain[naPuts]$putOI <- 0, silent=T)#
+	options(warn=T)#
+	return(chain)#
+}
+naToZero <- function(chain){#
+	options(warn=-1)#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+	naCalls <- is.na(chain$callOI)#
+	naPuts <- is.na(chain$putOI)#
+	try(chain[naCalls]$callOI <- 0, silent=T)#
+	try(chain[naPuts]$putOI <- 0, silent=T)#
+	options(warn=1)#
+	return(chain)#
+}
+naToZero <- function(chain){#
+	options(warn=-1)#
+	if (doDebug) print("naToZero")#
+	if (is.null(chain)) return(NULL)#
+	naCalls <- is.na(chain$callOI)#
+	naPuts <- is.na(chain$putOI)#
+	chain[naCalls]$callOI <- 0#
+	chain[naPuts]$putOI <- 0#
+	options(warn=1)#
+	return(chain)#
+}
+chain1 <- getOneExpiration(chains, input_expiry)#
+chain2 <- naToZero(chain1)
+library(shiny)#
+library(shinyapps)#
+setwd("~/ShinyApps")#
 runApp("openinterest")
-0
+symbol <- "AAPL"
+fixJSON = function(json){#
+    gsub('([^,{:]+):', '"\\1":', json)#
+  }
+URL1 = 'http://www.google.com/finance/option_chain?q=%s&output=json'#
+  URL2 = paste0(URL1, '&expy=%d&expm=%d&expd=%d')#
+  url = sprintf(URL1, symbol)
+chain = tryCatch({#
+  	fromJSON(fixJSON(getURL(url)))},#
+  	error = function(cond) {return(NULL)})
+options = tryCatch({#
+  	mlply(chain$expirations, function(y, m, d) {#
+	    url = sprintf(URL2, symbol, y, m, d)#
+	    expiry = fromJSON(fixJSON(getURL(url)))#
+	    expiry$calls$type = "Call"#
+	    expiry$puts$type  = "Put"#
+	    prices = rbind(expiry$calls, expiry$puts)#
+	    prices$expiry = sprintf("%4d-%02d-%02d", y, m, d)#
+	    prices$underlying.price = expiry$underlying_price#
+	    prices$retrieved = Sys.time()#
+	    prices#
+  		})#
+  	},#
+  	error= function(cond) {#
+  		return(NULL)#
+  		}#
+  	)
+options
 library("zoo")#
+library("ggplot2")#
 library("PerformanceAnalytics")#
 library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
 valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
-data <- read.csv(valueFile)#
-data.zoo <- read.zoo(valueFile,format="%Y-%m-%d %H:%M:%S", header=T, sep=",")#
-data.xts <- as.xts(data.zoo)#
-data.zoo$all <- rowSums(data.zoo)#
-plot(data.zoo)#
-plot.zoo(data.xts)
-head(data)
-unique(data$time)
-data$time
-data
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$other <-other#
+data.zoo[1:193,"other"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$other#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg#
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad, other))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
 library("zoo")#
+library("ggplot2")#
 library("PerformanceAnalytics")#
 library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
 valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
-data <- read.csv(valueFile)
-data.xts <- as.xts(data)
-help(as.xts)
-timeFormat <- "%Y-%m-%d %H:%M:%S"#
-data <- read.csv(valueFile)#
-data.zoo <- read.zoo(valueFile,format=timeFormat, header=T, sep=",")#
-data.xts <- as.xts(data.zoo, dateFormat=timeFormat)
-head(data.xts)
-data.zoo <- read.zoo(valueFile,format=tz, header=T, sep=",")
-tz
-data.zoo <- read.zoo(valueFile,format="tz", header=T, sep=",")
-data.zoo <- read.tz(valueFile,format=timeFormat, header=T, sep=",")
-zoo
-warnings()
-hour <- as.POSIXlt(time(data.zoo))$hour#
-plot(hour, data.zoo)
-time(data.zoo)
-data.zoo <- read.zoo(valueFile,format=timeFormat, header=T, sep=",")
-data.zoo
-timeFormat
-data.zoo <- read.zoo(valueFile,format=POSIXlt, header=T, sep=",")
-help(read.zoo)
-data.zoo <- read.zoo(valueFile,format="%Y-%m-%d %H:%M:%S", header=T, sep=",")
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <-interactivebroker#
+data.zoo[1:193,"other"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$other#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg#
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"
 data.zoo <- read.zoo(valueFile, header=T, sep=",")
+data.zoo$ira <- data.zoo$ira + data.zoo$roll
+data.zoo$ib <-interactivebroker
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg#
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad))
 head(data.zoo)
-data.xts <- as.xts(data.zoo)
-data.xts
-hour <- as.POSIXlt(time(data.zoo))$hour
-hour
-plot(hour, data.zoo)
-plot(data)
-plot(data.zoo)
-plot.zoo(data.xts)
-plot.zoo(data.xts$roll)
-names(data.xts)
-for (i in 1:5)#
-	plot(data.zoo[,i])
-name(data.zoo[,1])
-names(data.zoo[,1])
-names(data.zoo)
-names(data.zoo[,2])
-names(data.zoo[1,2])
-colnames(data.zoo)
-colnames(data.zoo[,1]
-)
-names(data)
-plot(data.zoo$reg)#
-plot(data.zoo$ira)#
-plot(data.zoo$roll)#
-plot(data.zoo$roth)#
-plot(data.zoo$mom)#
-plot(data.zoo$dad)
-library("ggplot2")
 library("zoo")#
 library("ggplot2")#
 library("PerformanceAnalytics")#
 library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
 valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
-timeFormat <- "%Y-%m-%d %H:%M:%S"#
-data <- read.csv(valueFile)#
 data.zoo <- read.zoo(valueFile, header=T, sep=",")#
-data.xts <- as.xts(data.zoo)#
-data.zoo$all <- rowSums(data.zoo)#
-hour <- as.POSIXlt(time(data.zoo))$hour#
-plot(data)
-autoplot(data)
-autoplot(data.zoo)
-data <- data$all
-data.zoo <- data.zoo$all
-ggplot(aes(x = Index, y = Value), data = fortify(data.zoo, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("x")
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg#
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
 library("zoo")#
 library("ggplot2")#
 library("PerformanceAnalytics")#
 library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
 valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
-timeFormat <- "%Y-%m-%d %H:%M:%S"#
-data <- read.csv(valueFile)#
 data.zoo <- read.zoo(valueFile, header=T, sep=",")#
-data.xts <- as.xts(data.zoo)#
-data.zoo$all <- rowSums(data.zoo)#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg + interactivebroker#
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+data.zoo$reg
+nrow(data.zoo)
+data.zoo[1:193,"ib"]
+data.zoo$ib <- interactivebroker
+data.zoo[1:193,"ib"] <- 0
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dadd, ib))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 17500#
+other <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad, ib))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 29800#
+interactivebroker <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll,mom,dad, ib))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("ggplot2")#
+library("zoo")#
+file <- "~/Dropbox/hr2.csv"#
+data <- read.csv(file, row.names=NULL)#
+head(data)#
+data$dateTime <- paste(data$date,data$time,sep=" ")#
+data$dateTime <- strptime(data$dateTime, "%m/%d/%y %H:%M:%S")#
+data$day <- data$date#
+data <- subset(data, select=-c(date, time))#
+names(data) <- c("hr", "date", "day")#
+ggplot(data, aes(date, hr)) +geom_point(alpha=1/100)#
+temp <- data.frame(date=data$date, hr=data$hr)#
+data$x <- duplicated(data$date)#
+subset(data, x==T)#
+highRate <- 150#
+dataHigh <- subset(data, data$hr > highRate)#
+ggplot(dataHigh, aes(time, hr)) +geom_point(alpha=1/100)#
+ggplot(dataHigh, aes(date, hr)) +geom_point(alpha=1/100)#
+#
+midRate1 <- 90#
+midRate2 <- 140#
+dataMid <- subset(data, (data$hr < midRate2) & (data$hr > midRate1))#
+ggplot(dataMid, aes(time, hr)) +geom_point(alpha=1/100)#
+dataNight <- subset(data, format(time,'%H') %in% c('23','24','01','02','03','04','05','06'))#
+dataNight <- subset(dataNight, hr > 100)#
+ggplot(dataNight, aes(date, hr)) +geom_point(alpha=1/10)#
+ggplot(dataNight, aes(time, hr)) +geom_point(alpha=1/10)#
+#
+data.zoo <- read.zoo(temp)#
+plot(data.zoo)#
+autoplot.zoo(data.zoo, geom="point") + aes(alpha = 0.1)#
+#
+smoothIndex <- rollmean(x = data,  #
+                        k = 30,  #
+                        fill = NA)  #
+length(ftseIndex) == length(smoothIndex)#
+lines(smoothIndex, col = "RED")#
+attributes(as.POSIXlt(time(data.zoo)))#
+#
 hour <- as.POSIXlt(time(data.zoo))$hour#
-d <- data.zoo$roll#
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("x")
-d <- data.zoo$ira#
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("x")
-d <- data.zoo$dhs#
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("x")
-d <- data.zoo$reg#
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("x")
-data.zoo$mine <- data.zoo$roll + data.zoo$ira + data.zoo$reg
-d <- data.zoo$mine#
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("x")
-d <- data.zoo#
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("total")
-d
-d <- data.zoo$mine
-head(d)
-data.zoo$Index
-ggplot(aes(x = Index), data = fortify(data.zoo, melt = TRUE)) +
-geom_line() + xlab("Index") + ylab("total")
-ggplot(aes(x = Index, y = Roll), data = fortify(data.zoo, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("total")
-ggplot(aes(x = Index, y = roll), data = fortify(data.zoo, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("total")
-data.zoo$roll
-ggplot(aes(x = Index, y = value), data = fortify(data.zoo$roll, melt = TRUE)) + geom_line() + xlab("Index") + ylab("total")
-ggplot(aes(x = Index, y = Value), data = fortify(data.zoo$roll, melt = TRUE)) + geom_line() + xlab("Index") + ylab("total")
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) + geom_line() + xlab("Index") + ylab("total")
-ggplot(aes(x = Index, y = Value), data = fortify(d, melt = TRUE)) +#
-  geom_line() + xlab("Index") + ylab("total")
-deployApp("babynames")
-runApp("babynamesSimple")
+plot(hour, data.zoo)#
+data$hour <- hour#
+qplot(factor(hour), hr, data=data, geom=c("boxplot"))#
+dow <- as.POSIXlt(time(data.zoo))$wday #
+plot(dow, data.zoo)#
+boxplot(dow, data.zoo)#
+x <- data.zoo#
+data$dayofweek <- factor(dow)#
+data$dow <- dow#
+levels(data$dayofweek) <- c("sun","mon","tues","wed","thur","fri","sat")#
+levels(data$dayofweek)#
+data$dayofweek <- relevel(data$dayofweek,"sat") #
+levels(data$dayofweek)#
+#
+qplot(dayofweek, hr, data=data, geom=c("boxplot"))#
+month <- as.POSIXlt(time(data.zoo))$mon#
+data$month <- factor(month)#
+levels(data$month) <- format(ISOdate(2004,1:12,1),"%B")#
+qplot(month, hr, data=data, geom=c("boxplot"))#
+lag=121#
+data.median <- aggregate(data.zoo, as.Date, mean)#
+autoplot(data.median, geom="point") + aes(alpha = 0.1)#
+data.roll <- rollmedian(data.median, lag, align="left")#
+autoplot(data.roll, geom="point")#
+#
+is.weekend <- function(x) (as.numeric(x)==0)|(as.numeric(x)==6)#
+#
+data$weekend <- is.weekend(data$dow)#
+qplot(factor(hour), hr, data=data[data$weekend,], geom=c("boxplot"), main="weekend")#
+qplot(factor(hour), hr, data=data[!data$weekend,], geom=c("boxplot"), main="weekday")#
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~dayofweek, nrow=2) + ylim(60,180)#
+ggplot(data=data, aes(factor(hour),hr)) + geom_boxplot() + facet_wrap(~weekend, nrow=2)
+head(data)
+tail(data)
+tail(zoo.df)
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 50400#
+loan <- 29800#
+interactivebroker <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+zoo.df
+data.zoo
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 48650#
+loan <- 29800#
+interactivebroker <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0
+tail(data.zoo)
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 48650#
+loan <- 30092#
+interactivebroker <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+interactivebroker <- 48650#
+loan <- 30092#
+interactivebroker <- interactivebroker - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib, mom, dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+#
+tweedy <- 4503#
+usBonds <- 5634#
+interactivebroker <- 48650#
+loan <- 30092#
+interactivebroker <- interactivebroker + tweedy + usBonds - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib, mom, dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+fsb <- 2100#
+tweedy <- 4503#
+usBonds <- 5634#
+interactivebroker <- 48650#
+loan <- 30092#
+interactivebroker <- interactivebroker + tweedy + usBonds - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib, mom, dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+fsb <- 2100#
+tweedy <- 4503#
+usBonds <- 5634#
+interactivebroker <- 48650#
+loan <- 30092#
+interactivebroker <- interactivebroker + tweedy + usBonds + fsb - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- 0#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib, mom, dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+fsb <- 2100#
+tweedy <- 4503#
+usBonds <- 5634#
+interactivebroker <- 48650#
+loan <- 30092#
+interactivebroker <- interactivebroker + tweedy + usBonds + fsb - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- tweedy + usBonds + fsb#
+#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll,  mom, dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+fsb <- 2100#
+tweedy <- 4503#
+usBonds <- 5634#
+interactivebroker <- 48650#
+loan <- 30092#
+interactivebroker <- interactivebroker + tweedy + usBonds + fsb - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- tweedy + usBonds + fsb#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib, mom, dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
+library("zoo")#
+library("ggplot2")#
+library("PerformanceAnalytics")#
+library("xts")#
+library(scales)#
+fsb <- 2100#
+tweedy <- 4503#
+usBonds <- 5634#
+interactivebroker <- 46480#
+loan <- 30092#
+interactivebroker <- interactivebroker + tweedy + usBonds + fsb - loan#
+toWealth <- function(x) {#
+	initial <- as.vector(x[1,])#
+	coredata(x) <- sweep(x,MARGIN=2,initial,'/')#
+	return(x)#
+}#
+#
+valueFile <- "~/ShinyApps/tosAsync/out/value.csv"#
+data.zoo <- read.zoo(valueFile, header=T, sep=",")#
+#
+data.zoo$ira <- data.zoo$ira + data.zoo$roll#
+data.zoo$ib <- interactivebroker#
+data.zoo[1:193,"ib"] <- tweedy + usBonds + fsb#
+data.zoo$reg <- data.zoo$reg + data.zoo$ib#
+data.zoo$all <- data.zoo$roth +  data.zoo$ira + data.zoo$reg #
+data.zoo <- subset(data.zoo, select=-c(roll, ib, mom, dad))#
+theData <- toWealth(data.zoo)#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index") +  scale_y_continuous("Value $", labels=comma) #
+#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p  #
+theData <- data.zoo#
+#
+zoo.df = fortify(theData, melt = TRUE)#
+#
+p <- ggplot(aes(x = Index, y = Value, group=Series,colour=Series), data = zoo.df) + geom_line() + xlab("Index")  +scale_y_continuous("Value $", labels=comma)#
+  p + facet_grid(Series~., scale="free_y", labeller="label_value")  #
+  p    +scale_y_continuous("Value $", labels=comma, breaks=seq(0,600000,20000))
 library(shiny)#
 library(shinyapps)#
-setwd("~/shinyapps/")#
-#
-options(shiny.reactlog=TRUE)#
-runApp("babynames")
-help(babynames)
-babynames
-getYearsNames <- function(df, startYear, endYear){#
-	df <- df[(df$year>= startYear) & (df$year<= endYear),]	#
-	df <- subset(df, select=-c(year))#
-	return(df)#
-}#
-doSexSubset <- function(df, theSex){#
-	df <- df[df$sex==theSex,]#
-	df <- subset(df, select=-c(sex))#
-	return(df)#
-}#
-getUniqueNames <- function(data){#
-	data <- unique(data)#
-	return(data)#
-}#
-doStartsWithSubset <- function(df, letters="bb"){#
-	substr(letters,1,1) <- toupper(substr(letters,1,1))#
-	substr(letters,2,nchar(letters)) <- tolower(substr(letters,2,nchar(letters)))#
-	df <- df[substr(df$name,1,nchar(letters))==letters,]#
-	return(df)#
-}#
-#
-getAggregatedYears <- function(df){#
-	df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")	#
-	return(df)#
-}#
-getSorted <- function(df, sortAlpha){#
-	if (sortAlpha) #
-		data <- unique(sort(df$name))#
-	else {#
-		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")#
-		df <- df[order(df$prop,df$name,decreasing=T),]#
-		data <- df$name	#
-		}#
-	return(data)	#
-	}#
-#
-parseNames <- function(theSex,theYears,theLetters,sortAlpha){#
-		df <- doSexSubset(babynames, theSex)#
-		df  <- doYearSubset(df,startYear, endYear)#
-		df<- doStartsWithSubset(df,theLetters)#
-		df <- getAggregatedYears(df)#
-		return(df)#
-}#
-#
-lookupOneName <-function(theSex, theLookup, theYears){#
-		namesOneSex <- getSexNames(babynames, theSex)#
-		namesYears  <- getYearsNames(namesOneSex,theYears)#
-		theAgg <- getAggregatedYears(namesYears)#
-		theAgg$rank <- perc.rank(theAgg$prop)#
-		theName <- theAgg[theAgg$name==theLookup,]#
-		return(theName$prop*100)#
-}#
-#
-perc.rank <- function(x) trunc(rank(x))/length(x)
-head(babynames)
-theSex <- "F"#
-endYear <- 2009#
-startYear <- 2000#
-theLetters <- "A"
-doYearsSubset <- function(df, startYear, endYear){#
-	df <- df[(df$year>= startYear) & (df$year<= endYear),]	#
-	df <- subset(df, select=-c(year))#
-	return(df)#
-}
-doYearSubset <- function(df, startYear, endYear){#
-	df <- df[(df$year>= startYear) & (df$year<= endYear),]	#
-	df <- subset(df, select=-c(year))#
-	return(df)#
-}
-df <- doSexSubset(babynames, theSex)
-df  <- doYearSubset(df,startYear, endYear)
-df<- doStartsWithSubset(df,theLetters)
-df <- getAggregatedYears(df)
-head(df)
-parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){
-parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){#
-		df <- doSexSubset(babynames, theSex)#
-		df  <- doYearSubset(df,startYear, endYear)#
-		df<- doStartsWithSubset(df,theLetters)#
-		df <- getAggregatedYears(df)#
-		return(df)#
-}
-names
-sortAlpha <- TRUE
-namesSorted <- getSorted(data, sortAlpha)
-doDebug <<- T
-doYearSubset <- function(df, startYear, endYear){#
-	if (doDebug) print("doYearSubset \n")#
-	df <- df[(df$year>= startYear) & (df$year<= endYear),]	#
-	df <- subset(df, select=-c(year))#
-	return(df)#
-}#
-doSexSubset <- function(df, theSex){#
-	if (doDebug) print("doSexSubset \n")#
-	df <- df[df$sex==theSex,]#
-	df <- subset(df, select=-c(sex))#
-	return(df)#
-}#
-getUniqueNames <- function(data){#
-	if (doDebug) print("getUniqueNames \n")#
-	data <- unique(data)#
-	return(data)#
-}#
-doStartsWithSubset <- function(df, letters="bb")#
-	if (doDebug) print("doStartsWithSubset \n")#
-	substr(letters,1,1) <- toupper(substr(letters,1,1))#
-	substr(letters,2,nchar(letters)) <- tolower(substr(letters,2,nchar(letters)))#
-	df <- df[substr(df$name,1,nchar(letters))==letters,]#
-	return(df)#
-}#
-#
-getAggregatedYears <- function(df){#
-	if (doDebug) print("getAggregatedYears \n")#
-	df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")	#
-	return(df)#
-}#
-getSorted <- function(df, sortAlpha){#
-	if (doDebug) print("getSorted \n")#
-	if (sortAlpha) #
-		data <- unique(sort(df$name))#
-	else {#
-		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")#
-		df <- df[order(df$prop,df$name,decreasing=T),]#
-		data <- df$name	#
-		}#
-	return(data)	#
-	}#
-#
-parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){#
-	if (doDebug) print("parsenames \n")#
-		df <- doSexSubset(babynames, theSex)#
-		df  <- doYearSubset(df,startYear, endYear)#
-		df<- doStartsWithSubset(df,theLetters)#
-		df <- getAggregatedYears(df)#
-		return(df)#
-}#
-#
-lookupOneName <-function(theSex, theLookup, theYears){#
-		namesOneSex <- getSexNames(babynames, theSex)#
-		namesYears  <- getYearsNames(namesOneSex,theYears)#
-		theAgg <- getAggregatedYears(namesYears)#
-		theAgg$rank <- perc.rank(theAgg$prop)#
-		theName <- theAgg[theAgg$name==theLookup,]#
-		return(theName$prop*100)#
-}#
-#
-perc.rank <- function(x) trunc(rank(x))/length(x)
-doYearSubset <- function(df, startYear, endYear){#
-	if (doDebug) print("doYearSubset \n")#
-	df <- df[(df$year>= startYear) & (df$year<= endYear),]	#
-	df <- subset(df, select=-c(year))#
-	return(df)#
-}#
-doSexSubset <- function(df, theSex){#
-	if (doDebug) print("doSexSubset \n")#
-	df <- df[df$sex==theSex,]#
-	df <- subset(df, select=-c(sex))#
-	return(df)#
-}#
-getUniqueNames <- function(data){#
-	if (doDebug) print("getUniqueNames \n")#
-	data <- unique(data)#
-	return(data)#
-}#
-doStartsWithSubset <- function(df, letters="bb"){#
-	if (doDebug) print("doStartsWithSubset \n")#
-	substr(letters,1,1) <- toupper(substr(letters,1,1))#
-	substr(letters,2,nchar(letters)) <- tolower(substr(letters,2,nchar(letters)))#
-	df <- df[substr(df$name,1,nchar(letters))==letters,]#
-	return(df)#
-}#
-#
-getAggregatedYears <- function(df){#
-	if (doDebug) print("getAggregatedYears \n")#
-	df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")	#
-	return(df)#
-}#
-getSorted <- function(df, sortAlpha){#
-	if (doDebug) print("getSorted \n")#
-	if (sortAlpha) #
-		data <- unique(sort(df$name))#
-	else {#
-		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")#
-		df <- df[order(df$prop,df$name,decreasing=T),]#
-		data <- df$name	#
-		}#
-	return(data)	#
-	}#
-#
-parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){#
-	if (doDebug) print("parsenames \n")#
-		df <- doSexSubset(babynames, theSex)#
-		df  <- doYearSubset(df,startYear, endYear)#
-		df<- doStartsWithSubset(df,theLetters)#
-		df <- getAggregatedYears(df)#
-		return(df)#
-}#
-#
-lookupOneName <-function(theSex, theLookup, theYears){#
-		namesOneSex <- getSexNames(babynames, theSex)#
-		namesYears  <- getYearsNames(namesOneSex,theYears)#
-		theAgg <- getAggregatedYears(namesYears)#
-		theAgg$rank <- perc.rank(theAgg$prop)#
-		theName <- theAgg[theAgg$name==theLookup,]#
-		return(theName$prop*100)#
-}#
-#
-perc.rank <- function(x) trunc(rank(x))/length(x)
-library(shiny)#
-library(babynames)#
-source("~/ShinyApps/babynames/cleanNames.R")#
-startY <- 1880#
-	endY <- 2013#
-	theYears <- c(startY,endY)#
-	sortAlpha <- TRUE#
-	theLetters <- "M"#
-	theSex <- "F"#
-#
-theLookup <- "Mary"#
-#
-	names <- reactive(parseNames(theSex, startYear, endYear, theLetters))#
-	namesSorted <- reactive(getSorted(names, sortAlpha))#
-	allTheNames <- renderText(namesSorted$name)#
-	theOneFreq <- renderText(lookupOneName(theLookup, namesSorted))
-names <- parseNames(theSex, startYear, endYear, theLetters)
-namesSorted <- getSorted(names, sortAlpha)
-allTheNames <- namesSorted$name
-allTheNames
-theOneFreq <- lookupOneName(theLookup, namesSorted)
-doYearSubset <- function(df, startYear, endYear){#
-	if (doDebug) print("doYearSubset ")#
-	df <- df[(df$year>= startYear) & (df$year<= endYear),]	#
-	df <- subset(df, select=-c(year))#
-	return(df)#
-}#
-doSexSubset <- function(df, theSex){#
-	if (doDebug) print("doSexSubset ")#
-	df <- df[df$sex==theSex,]#
-	df <- subset(df, select=-c(sex))#
-	return(df)#
-}#
-getUniqueNames <- function(data){#
-	if (doDebug) print("getUniqueNames ")#
-	data <- unique(data)#
-	return(data)#
-}#
-doStartsWithSubset <- function(df, letters="bb"){#
-	if (doDebug) print("doStartsWithSubset ")#
-	substr(letters,1,1) <- toupper(substr(letters,1,1))#
-	substr(letters,2,nchar(letters)) <- tolower(substr(letters,2,nchar(letters)))#
-	df <- df[substr(df$name,1,nchar(letters))==letters,]#
-	return(df)#
-}#
-#
-getAggregatedYears <- function(df){#
-	if (doDebug) print("getAggregatedYears ")#
-	df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")	#
-	return(df)#
-}#
-getSorted <- function(df, sortAlpha){#
-	if (doDebug) print("getSorted ")#
-	if (sortAlpha) #
-		data <- unique(sort(df$name))#
-	else {#
-		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")#
-		df <- df[order(df$prop,df$name,decreasing=T),]#
-		}#
-	return(df)	#
-	}#
-#
-parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){#
-	if (doDebug) print("parsenames ")#
-		df <- doSexSubset(babynames, theSex)#
-		df  <- doYearSubset(df,startYear, endYear)#
-		df<- doStartsWithSubset(df,theLetters)#
-		df <- getAggregatedYears(df)#
-		return(df)#
-}#
-#
-lookupOneName <-function(theLookup, df){#
-	if (doDebug) print("lookupOneName ")#
-		df$rank <- perc.rank(df$prop)#
-		theName <- df[df$name==theLookup,]#
-		return(theName$prop*100)#
-}#
-#
-perc.rank <- function(x) trunc(rank(x))/length(x)
-names <- parseNames(theSex, startYear, endYear, theLetters)#
-	namesSorted <- getSorted(names, sortAlpha)#
-	allTheNames <- namesSorted$name#
-	theOneFreq <- lookupOneName(theLookup, namesSorted)
-theOneFreq
+setwd("~/ShinyApps")
+runApp("babynamessimple")
 runApp("babynames")

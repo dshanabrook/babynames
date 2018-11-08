@@ -16,8 +16,8 @@ googleAnalytics <- function(account="UA-27455672-6"){
   </script>", sep=""))
 }
 
-shinyUI(
-
+ui <- fluidPage(
+	
 	pageWithSidebar(
 		headerPanel("More baby names then you could imagine"),
 			sidebarPanel(
@@ -29,10 +29,12 @@ shinyUI(
 				textInput("theLetters", "Use zero or more letters:", value="L"),
 				textInput("theLookup", "Lookup a name:", value="Mary"),
 				helpText("Gives all US baby names from 1880-2013."),
-				submitButton("Get Names")
+			  actionButton("go", "Get Names")
 				),
 		mainPanel(
-		h4(textOutput("theOneFreq")),
-		h5(textOutput("allTheNames")),
+		h4(textOutput(outputId="theOneFreq")),
+		h4(plotOutput(outputId="thePlot")),
+		h5(textOutput(outputId="allTheNames")),
+		
 		googleAnalytics()
 	)))
