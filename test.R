@@ -1,7 +1,7 @@
 #test
 library(shiny)
 library(babynames)
-source("~/ShinyApps/babynames/cleanNames.R")
+#source("~/ShinyApps/babynames/cleanNames.R")
 
 
 startYear <- 1900

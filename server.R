@@ -10,8 +10,4 @@ server <- shinyServer(function(input, output, session){
 	print(sort)
 	output$allTheNames <- renderText(sortedUniqueNames())
 	output$nameOverTime <- renderPlot(plot(freq()))
-#	output$nameFreq <- renderText(mean(names()$prop))
 })
-
-
-#shiny::runApp('~/ShinyApps/babynames/')

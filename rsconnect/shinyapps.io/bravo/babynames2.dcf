@@ -1,0 +1,10 @@
+name: babynames2
+title:
+username:
+account: bravo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 568546
+bundleId: 1698819
+url: https://bravo.shinyapps.io/babynames2/
+when: 1542131771.3997

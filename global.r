@@ -1,9 +1,7 @@
 #global for babynames
 library(shiny)
 library(babynames)
-#setwd("~/ShinyApps/babynames/")
-source("cleanNames.R")
-doDebug <<- T	
+doDebug <<- F
 
 getSorted <- function(df, sortAlpha){
 	if (doDebug) print("getSorted ")
@@ -61,4 +59,4 @@ lookupOneName <-function(theLookup, df){
 	
 }
 #http://stats.stackexchange.com/questions/11924/computing-percentile-rank-in-r
-perc.rank <- function(x) trunc(rank(x))/length(x)
+#perc.rank <- function(x) trunc(rank(x))/length(x)
