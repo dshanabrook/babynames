@@ -18,28 +18,32 @@
 
 ui <- fluidPage(
   headerPanel(fluidRow(offset = 4, "More baby names then you could imagine")),
-  sidebarPanel(
-    selectInput("theSex", "", list("Girl" = "F", "Boy" = "M")),
-    selectInput(
-      "sortAlpha",
-      "Sort:",
-      list("Popularity" = FALSE, "Alphabetically" = TRUE)
-    ),
-    textInput("startYear", "Starting year:", value = "1880"),
-    textInput("endYear", "Ending year:", value = "2013"),
-    #sliderInput("yearRange", label = h3("Year Range"), format = "####", min = 1880,  max = 2012, value = c(1880, 2013)),
-    textInput("theLetters", "Name Start:", value = "L"),
-    textInput("theLookup", "Lookup a name:", value = "Mary"),
-    actionButton("go", "Get Names"),
-    h4(textOutput(outputId = "theOneFreq"))
-  ),
-  #		   column(width=2,helpText("Gives all US baby names from 1880-2013.")),
   
-  mainPanel(column(6, h4(
-    plotOutput(outputId = "thePlot")
-  )),
-  column(4, h5(
-    textOutput(outputId = "allTheNames")
-  )))
-)
-#		googleAnalytics()
+  tabsetPanel(
+    tabPanel("Find a name",
+      sidebarPanel(
+        selectInput("theSex", "", list("Girl" = "F", "Boy" = "M")),
+        selectInput("sortAlpha","Sort:",list("Popularity" = FALSE, "Alphabetically" = TRUE)),
+        textInput("startYear", "Starting year:", value = "1880"),
+        textInput("endYear", "Ending year:", value = "2013"),
+        #sliderInput("yearRange", label = h3("Year Range"), format = "####", min = 1880,  max = 2012, value = c(1880, 2013)),
+        textInput("theLetters", "Name Start:", value = "Mar"),
+        actionButton("goNames", "Get Names")
+      ),
+      
+      mainPanel(column(4, h5(textOutput(outputId = "allTheNames"))))
+                ),
+      tabPanel("Lookup a Name",
+            sidebarPanel(
+              textInput("theName", "Lookup a name:", value = "Mary"),
+               selectInput("theSex", "", list("Girl" = "F", "Boy" = "M")),
+               textInput("startYear", "Starting year:", value = "1880"),
+               textInput("endYear", "Ending year:", value = "2013"),
+               actionButton("goName", "Plot Name Over Time")),
+              
+            mainPanel(column(10, h5(plotOutput("nameOverTime"))))
+               )
+  ))
+
+      #		googleAnalytics()
+      

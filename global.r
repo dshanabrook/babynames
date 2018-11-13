@@ -5,50 +5,51 @@ library(babynames)
 source("cleanNames.R")
 doDebug <<- T	
 
-doYearSubset <- function(df, startYear, endYear){
-	if (doDebug) print("doYearSubset ")
-	df <- df[(df$year>= startYear) & (df$year<= endYear),]	
-	return(df)
-}
-
-doSexSubset <- function(df, theSex){
-	if (doDebug) print("doSexSubset ")
-	df <- df[df$sex==theSex,]
-#	df <- subset(df, select=-c(sex))
-	return(df)
-}
-doStartsWithSubset <- function(df, letters="bb"){
-	if (doDebug) print("doStartsWithSubset ")
-	substr(letters,1,1) <- toupper(substr(letters,1,1))
-	substr(letters,2,nchar(letters)) <- tolower(substr(letters,2,nchar(letters)))
-	df <- df[substr(df$name,1,nchar(letters))==letters,]
-	return(df)
-}
-
-getAggregatedYears <- function(df){
-	if (doDebug) print("getAggregatedYears ")
-	df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")	
-	return(df)
-}
 getSorted <- function(df, sortAlpha){
 	if (doDebug) print("getSorted ")
+  print(nrow(df))
+  print(names(df))
 	if (sortAlpha) 
 		data <- unique(sort(df$name))
 	else {
 		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")
-		df <- df[order(df$prop,df$name,decreasing=T),]
+		data <- df[order(df$prop,df$name,decreasing=T),]$name
 		}
-	return(df)	
+	return(data)	
 	}
 
-parseNames <- function(theSex,startYear, endYear,theLetters,sortAlpha){
-	if (doDebug) print("parsenames ")
-		df <- doSexSubset(babynames, theSex)
-		df  <- doYearSubset(df,startYear, endYear)
-		df<- doStartsWithSubset(df,theLetters)
-		df <- getAggregatedYears(df)
-		return(df)
-}
+parseNames <-
+  function(theSex,
+           startYear,
+           endYear,
+           theLetters) {
+    if (doDebug) print("parsenames ")
+    #sex
+    df <- babynames[babynames$sex == theSex, ]
+    #years
+    df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
+    #string
+    df3 <- df2[tolower(substr(df2$name,1,nchar(theLetters))) == tolower(theLetters), ]
+    #aggregate by year (exact match)
+    return(df3)
+  }
+parseFreq <- 
+  function(theSex,
+           startYear,
+           endYear,
+           theName) {
+    if (doDebug) print("parseFreq ")
+    #sex
+    df <- babynames[babynames$sex == theSex, ]
+    #years
+    df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
+    print(nrow(df2))
+    #aggregate by year (exact match)
+    df5 <- df2[tolower(df2$name) == tolower(theName), ]
+    df6 <- aggregate(df5["prop"], by = df5[c("year")], FUN = "mean")
+    return(df6)
+  }
+
 
 lookupOneName <-function(theLookup, df){
 	if (doDebug) print("lookupOneName ")

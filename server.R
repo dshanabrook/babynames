@@ -1,12 +1,16 @@
 #babynames
 server <- shinyServer(function(input, output, session){	
-
-	names <- eventReactive(input$go, {parseNames(input$theSex, input$startYear, input$endYear, isolate(input$theLetters))})
-	namesSorted <- reactive(getSorted(names(), input$sortAlpha))
-	
-	output$allTheNames <- renderText(namesSorted()$name)
-	output$theOneFreq <- renderText(lookupOneName(input$theLookup, names()))
-	output$thePlot <- renderPlot(hist(rnorm(input$startYear)))
+  
+  nameMatch <-eventReactive(input$goNames, {parseNames(input$theSex, input$startYear, input$endYear, 
+                                                       isolate(input$theLetters))
+	 })
+	freq <- eventReactive(input$goName,  {parseFreq (input$theSex, input$startYear, input$endYear, 
+	                                                 input$theName)})
+	sortedUniqueNames <- reactive(getSorted(nameMatch(), isolate(input$sortAlpha)))
+	print(sort)
+	output$allTheNames <- renderText(sortedUniqueNames())
+	output$nameOverTime <- renderPlot(plot(freq()))
+#	output$nameFreq <- renderText(mean(names()$prop))
 })
 
 
