@@ -1,6 +1,7 @@
 #global for babynames
 library(shiny)
 library(babynames)
+library(ggplot2)
 doDebug <<- F
 
 getSorted <- function(df, sortAlpha){
@@ -31,6 +32,7 @@ parseNames <-
     #aggregate by year (exact match)
     return(df3)
   }
+
 parseFreq <- 
   function(theSex,
            startYear,
@@ -38,13 +40,13 @@ parseFreq <-
            theName) {
     if (doDebug) print("parseFreq ")
     #sex
-    df <- babynames[babynames$sex == theSex, ]
+   df <- babynames#[babynames$sex == theSex, ]
     #years
     df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
-    print(nrow(df2))
+    #print(nrow(df2))
     #aggregate by year (exact match)
     df5 <- df2[tolower(df2$name) == tolower(theName), ]
-    df6 <- aggregate(df5["prop"], by = df5[c("year")], FUN = "mean")
+    df6 <- aggregate(df5["prop"], by = df5[c("year","sex")], FUN = "mean")
     return(df6)
   }
 

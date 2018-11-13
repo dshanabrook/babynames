@@ -36,7 +36,6 @@ ui <- fluidPage(
       tabPanel("Lookup a Name",
             sidebarPanel(
               textInput("theName", "Lookup a name:", value = "Mary"),
-               selectInput("theSex", "", list("Girl" = "F", "Boy" = "M")),
                textInput("startYear", "Starting year:", value = "1880"),
                textInput("endYear", "Ending year:", value = "2013"),
                actionButton("goName", "Plot Name Over Time")),

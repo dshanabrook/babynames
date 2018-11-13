@@ -32,10 +32,13 @@ theYears <- c(startYear, endYear)
 sortAlpha <- F
 theLetters <- "La"
 theSex <- "F"
-theName <- "mary"
+theName <- "robin"
 names <-parseNames(theSex, startYear, endYear, theLetters)
 freq <- parseFreq (theSex, startYear, endYear, tolower(theName))
 namesSorted <- getSorted(names, T)
-
+boy <- getSex(freq,"M")
+girl <- getSex(freq,"F")
 namesSorted$name
-plot(freq)
+plot(girl, col="pink")
+lines(boy,col="blue")
+theplot <- 

@@ -9,5 +9,6 @@ server <- shinyServer(function(input, output, session){
 	sortedUniqueNames <- reactive(getSorted(nameMatch(), isolate(input$sortAlpha)))
 	print(sort)
 	output$allTheNames <- renderText(sortedUniqueNames())
-	output$nameOverTime <- renderPlot(plot(freq()))
+	output$nameOverTime <- renderPlot(ggplot(freq(), aes(x=year, y=prop,group=sex))
+	                                  +geom_line(aes(colour=sex)))
 })
