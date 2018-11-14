@@ -22,33 +22,37 @@ ui <- fluidPage(
   tabsetPanel(
     tabPanel("Find a name",
       sidebarPanel(
-        selectInput("theSex", "", list("Girl" = "F", "Boy" = "M")),
-        selectInput("sortAlpha","Sort:",list("Popularity" = FALSE, "Alphabetically" = TRUE)),
-        textInput("startYear", "Starting year:", value = "1880"),
-        textInput("endYear", "Ending year:", value = "2013"),
-        #sliderInput("yearRange", label = h3("Year Range"), format = "####", min = 1880,  max = 2012, value = c(1880, 2013)),
         textInput("theLetters", "Name Start:", value = "Mar"),
+        selectInput("theSex1", "Sex", list("Girl" = "F", "Boy" = "M")),
+        selectInput("sortAlpha","Sort:",list("Popularity" = FALSE, "Alphabetically" = TRUE)),
+#        textInput("startYear1", "Starting year:", value = "1880"),
+#        textInput("endYear1", "Ending year:", value = "2013"),
+        sliderInput("yearRange1", label = h3("Year Range"), sep="", min = 1880,  max = 2012, value = c(1880, 2013)),
         actionButton("goNames", "Get Names")
       ),
       
-      mainPanel(column(4, h5(textOutput(outputId = "allTheNames"))))
+      mainPanel(column(8, h5(textOutput(outputId = "allTheNames"))))
                 ),
       tabPanel("Lookup a Name",
             sidebarPanel(
               textInput("theName", "Lookup a name:", value = "Mary"),
-               textInput("startYear", "Starting year:", value = "1880"),
-               textInput("endYear", "Ending year:", value = "2013"),
+#               textInput("startYear2", "Starting year:", value = "1880"),
+#               textInput("endYear2", "Ending year:", value = "2013"),
+                sliderInput("yearRange2", label = h3("Year Range"), sep="", min = 1880,  max = 2012, value = c(1880, 2013)),
+
                actionButton("goName", "Plot Name Over Time")),
               
             mainPanel(column(10, h5(plotOutput("nameOverTime"))))
                ),
       tabPanel("Compare Names",
                sidebarPanel(
-                 textInput("compareNameOne", "First Name:", value = "Tom"),
-                 textInput("compareNameTwo", "Second Name:", value= "Dick"),
-                 selectInput("theSex", "", list("Girl" = "F", "Boy" = "M")),
-                 textInput("startYear", "Starting year:", value = "1880"),
-                 textInput("endYear", "Ending year:", value = "2013"),
+                 textInput("compareNameOne", "First Name:", value = "Mary"),
+                 textInput("compareNameTwo", "Second Name:", value= "Margaret"),
+                 selectInput("theSex3", "Sex", list("Girl" = "F", "Boy" = "M"),selected="Girl"),
+#                 textInput("startYear3", "Starting year:", value = "1880"),
+#                 textInput("endYear3", "Ending year:", value = "2013"),
+                  sliderInput("yearRange3", label = h3("Year Range"), sep="", min = 1880,  max = 2012, value = c(1880, 2013)),
+
                  actionButton("goCompare", "Do Compare")),
                 mainPanel(column(10, h5(plotOutput("plotCompare"))))
                )

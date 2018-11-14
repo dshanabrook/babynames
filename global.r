@@ -5,14 +5,17 @@ library(ggplot2)
 doDebug <<- F
 
 getSorted <- function(df, sortAlpha){
-	if (doDebug) print("getSorted ")
-  print(nrow(df))
-  print(names(df))
+	if (doDebug) print(cat("getSorted, rows: ", nrow(df)))
 	if (sortAlpha) 
-		data <- unique(sort(df$name))
+	  {#unique <- unique(df$name)
+	  #more efficient than unique
+		data <- sort(df[!duplicated(df$name),]$name)}
 	else {
 		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")
 		data <- df[order(df$prop,df$name,decreasing=T),]$name
+		#ddpl was slower
+	  df2 <- ddply(df, .(name), summarise, qmean = mean(prop))
+		#data <- df2[order(df2$qmean,df2$name,decreasing=T),]$name
 		}
 	return(data)	
 	}
@@ -22,18 +25,21 @@ parseNames <-
            startYear,
            endYear,
            theLetters) {
-    if (doDebug) print("parsenames ")
+ #   if (!is.character(theLetters)) {theLetters <- ""}
+    if (doDebug) print(cat("parsenames name: ",theLetters))
     #sex
     df <- babynames[babynames$sex == theSex, ]
     #years
     df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
     #string
     df3 <- df2[tolower(substr(df2$name,1,nchar(theLetters))) == tolower(theLetters), ]
+    print(nrow(df3))
     #aggregate by year (exact match)
     return(df3)
   }
 
 parseTwoNames <- function(theSex, nameOne,nameTwo,startYear,endYear){
+  if (doDebug) print(cat("parseTwonames nameOne: ",nameOne))
   df <- babynames[babynames$sex == theSex, ]
   nameOne <- tolower(nameOne)
   nameTwo <- tolower(nameTwo)

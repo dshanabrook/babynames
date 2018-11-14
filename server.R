@@ -1,13 +1,12 @@
 #babynames
 server <- shinyServer(function(input, output, session){	
-  
-  theSexInput <- observe(input$theSex)
-  nameMatch <-eventReactive(input$goNames, {parseNames(theSexInput(), input$startYear, input$endYear, 
+
+  nameMatch <-eventReactive(input$goNames, {parseNames(input$theSex1, input$yearRange1[1], input$yearRange1[2], 
                                                        input$theLetters)
 	 })
-	freq <- eventReactive(input$goName,  {parseFreq (theSexInput(), input$startYear, input$endYear, 
+	freq <- eventReactive(input$goName,  {parseFreq (input$theSex1, input$yearRange2[1], input$yearRange2[2],
 	                                                 input$theName)})
-	compare <- eventReactive(input$goCompare, {parseTwoNames(theSexInput(), input$compareNameOne,input$compareNameTwo,input$startYear, input$endYear)})
+	compare <- eventReactive(input$goCompare, {parseTwoNames(input$theSex3, input$compareNameOne,input$compareNameTwo,input$yearRange3[1], input$yearRange3[2])})
 	#put this in function??
 	sortedUniqueNames <- reactive(getSorted(nameMatch(), isolate(input$sortAlpha)))
 

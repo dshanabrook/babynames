@@ -3,6 +3,8 @@ library(shiny)
 library(babynames)
 #source("~/ShinyApps/babynames/cleanNames.R")
 
+library(profvis)
+#profvis(runApp())
 
 startYear <- 1900
 endYear <- 2013
@@ -14,7 +16,7 @@ theName <- "mary"
 compareNameOne <- "tom"
 compareNameTwo <- "dick"
 
-theNames <- parseNames(theSex, startY, endY, theLetters)
+theNames <- parseNames(theSex, startYear, endYear, theLetters)
 theNames$rank <- perc.rank(theNames$prop)
 theNames$rank <- rank(theNames$prop)
 
@@ -34,6 +36,7 @@ sortAlpha <- F
 theLetters <- "La"
 theSex <- "F"
 theName <- "robin"
+df <- names
 names <-parseNames(theSex, startYear, endYear, theLetters)
 freq <- parseFreq (theSex, startYear, endYear, tolower(theName))
 namesSorted <- getSorted(names, T)
