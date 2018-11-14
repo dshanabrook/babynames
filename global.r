@@ -14,7 +14,7 @@ getSorted <- function(df, sortAlpha){
 		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")
 		data <- df[order(df$prop,df$name,decreasing=T),]$name
 		#ddpl was slower
-	  df2 <- ddply(df, .(name), summarise, qmean = mean(prop))
+	  #df2 <- ddply(df, .(name), summarise, qmean = mean(prop))
 		#data <- df2[order(df2$qmean,df2$name,decreasing=T),]$name
 		}
 	return(data)	
