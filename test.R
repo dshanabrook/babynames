@@ -11,7 +11,8 @@ sortAlpha <- F
 theLetters <- "L"
 theSex <- "F"
 theName <- "mary"
-
+compareNameOne <- "tom"
+compareNameTwo <- "dick"
 
 theNames <- parseNames(theSex, startY, endY, theLetters)
 theNames$rank <- perc.rank(theNames$prop)
@@ -36,9 +37,7 @@ theName <- "robin"
 names <-parseNames(theSex, startYear, endYear, theLetters)
 freq <- parseFreq (theSex, startYear, endYear, tolower(theName))
 namesSorted <- getSorted(names, T)
-boy <- getSex(freq,"M")
-girl <- getSex(freq,"F")
-namesSorted$name
-plot(girl, col="pink")
-lines(boy,col="blue")
-theplot <- 
+
+compare <- parseTwoNames(compareNameOne,compareNameTwo,startYear, endYear)
+ggplot(compare, aes(x=year, y=prop*100,group=name)) + geom_line(aes(colour=name))
+

@@ -33,6 +33,16 @@ parseNames <-
     return(df3)
   }
 
+parseTwoNames <- function(theSex, nameOne,nameTwo,startYear,endYear){
+  df <- babynames[babynames$sex == theSex, ]
+  nameOne <- tolower(nameOne)
+  nameTwo <- tolower(nameTwo)
+  #years
+  df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
+  df3 <- df2[(tolower(df2$name) == nameOne) | (tolower(df2$name) == nameTwo), ]
+  return(df3)
+}
+
 parseFreq <- 
   function(theSex,
            startYear,
@@ -40,7 +50,7 @@ parseFreq <-
            theName) {
     if (doDebug) print("parseFreq ")
     #sex
-   df <- babynames#[babynames$sex == theSex, ]
+   df <- babynames
     #years
     df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
     #print(nrow(df2))

@@ -41,8 +41,19 @@ ui <- fluidPage(
                actionButton("goName", "Plot Name Over Time")),
               
             mainPanel(column(10, h5(plotOutput("nameOverTime"))))
+               ),
+      tabPanel("Compare Names",
+               sidebarPanel(
+                 textInput("compareNameOne", "First Name:", value = "Tom"),
+                 textInput("compareNameTwo", "Second Name:", value= "Dick"),
+                 selectInput("theSex", "", list("Girl" = "F", "Boy" = "M")),
+                 textInput("startYear", "Starting year:", value = "1880"),
+                 textInput("endYear", "Ending year:", value = "2013"),
+                 actionButton("goCompare", "Do Compare")),
+                mainPanel(column(10, h5(plotOutput("plotCompare"))))
                )
-  ))
+          ))
+  
 
       #		googleAnalytics()
       
