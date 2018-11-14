@@ -32,7 +32,7 @@ parseNames <-
     #years
     df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
     #string
-    df3 <- df2[tolower(substr(df2$name,1,nchar(theLetters))) == tolower(theLetters), ]
+    df3 <- df2[substr(df2$name,1,nchar(theLetters)) == theLetters, ]
     print(nrow(df3))
     #aggregate by year (exact match)
     return(df3)
@@ -41,11 +41,12 @@ parseNames <-
 parseTwoNames <- function(theSex, nameOne,nameTwo,startYear,endYear){
   if (doDebug) print(cat("parseTwonames nameOne: ",nameOne))
   df <- babynames[babynames$sex == theSex, ]
-  nameOne <- tolower(nameOne)
-  nameTwo <- tolower(nameTwo)
+  #nameOne <- tolower(nameOne)
+  #nameTwo <- tolower(nameTwo)
   #years
   df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
-  df3 <- df2[(tolower(df2$name) == nameOne) | (tolower(df2$name) == nameTwo), ]
+  #df3 <- df2[(tolower(df2$name) == nameOne) | (tolower(df2$name) == nameTwo), ]
+  df3 <- df2[(df2$name == nameOne) | (df2$name == nameTwo), ]
   return(df3)
 }
 
@@ -60,8 +61,8 @@ parseFreq <-
     #years
     df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
     #print(nrow(df2))
-    #aggregate by year (exact match)
-    df5 <- df2[tolower(df2$name) == tolower(theName), ]
+    #aggregate by year (exact match!)
+    df5 <- df2[df2$name == theName, ]
     df6 <- aggregate(df5["prop"], by = df5[c("year","sex")], FUN = "mean")
     return(df6)
   }
