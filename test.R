@@ -50,3 +50,14 @@ yearRange[1]
 babynames <- ukbabynames
 names(babynames[5]) <- "prop"
 babynames$rank <- rank(-babynames$rank)
+install_genderdata_package()
+library(genderdata)
+data(package = "genderdata") 
+summary(napp)
+unique(napp$country)
+
+babynames<- icelandbabynames
+head(icelandbabynames)
+
+theNationality <- "norway"
+bn <- thebabynames[theNationality]

@@ -10,6 +10,10 @@ library(magrittr)
 
 #install.packages("shinycssloaders")
 library(shinycssloaders)
+
+#install_genderdata_package()
+library(genderdata)
+data(package = "genderdata") 
 doDebug <<- F
 
 #load("data/babynames1974_2015.RData")
@@ -23,6 +27,29 @@ ukbabynames$rank <- -ukbabynames$rank
 names(ukbabynames)[5] <- "prop"
 data(babynames)
 #[1] "year" "sex"  "name" "n"    "prop"
+
+modifyNappBabynames <- function(bn){
+  bnMod<-melt(bn, id.vars=c("name", "country","year"))
+  names(bnMod) <-c("name","country","year","sex","prop")
+  bnMod$sex <- as.factor(bnMod$sex)
+  levels(bnMod$sex)[levels(bnMod$sex)=="female"] <- "F"
+  levels(bnMod$sex)[levels(bnMod$sex)=="male"] <- "M" 
+  return(bnMod)
+}
+
+napp <- as.data.frame(napp)
+norwaybabynames <- modifyNappBabynames(napp[napp$country=="Norway",])
+swedenbabynames <- modifyNappBabynames(napp[napp$country=="Sweden",])
+canadababynames <- modifyNappBabynames(napp[napp$country=="Canada",])
+#ukbabynames <- napp[napp$country=="United Kingdom",]
+icelandbabynames <- modifyNappBabynames(napp[napp$country=="Iceland",])
+thebabynames <- list(babynames, ukbabynames, prenoms, norwaybabynames, swedenbabynames, canadababynames, icelandbabynames)
+names(thebabynames) <- c("usa","uk","france","norway","sweden","canada","iceland")
+
+
+# library(reshape2)
+
+
 
 getSorted <- function(df, sortAlpha){
 	if (doDebug) print(cat("getSorted, rows: ", nrow(df)))
@@ -116,6 +143,9 @@ getYearRange <- function(theNationality){
   else if (theNationality == "scotland")
   {theMin <- min(babynames$year)
     theMax <- max(babynames$year)}
+  else if (theNationality == "iceland")
+  {theMin <- min(icelandbabynames$year)
+  theMax <- max(icelandbabynames$year)}
   return(list(theMin,theMax))
 }
 

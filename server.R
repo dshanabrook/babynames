@@ -1,22 +1,18 @@
 #babynames
 server <- shinyServer(function(input, output, session){	
   
-  theBabynames <- reactive({
-    if (input$theNationality == "france") prenoms
-      else if (input$theNationality == "uk") ukbabynames
-      else if (input$theNationality == "usa") babynames
-      else if (input$theNationality == "scotland") scottishnames
-      else print(error)
-      })
-
+  theBabynames <- reactive(as.data.frame(thebabynames[[input$theNationality]]))
+  
   yearRange <- reactive(getYearRange(input$theNationality))
-  nameMatch <-eventReactive(input$goNames, {parseNames(theBabynames(), input$theSex1, input$yearRange[1], input$yearRange[2], 
+  minYear <- reactive(min(theBabynames()$year))
+  maxYear <- reactive(max(theBabynames()$year))
+  nameMatch <-eventReactive(input$goNames, {parseNames(theBabynames(), input$theSex1, minYear(), maxYear(), 
                                                        input$theLetters)})
-	freq <- eventReactive(input$goName,  {parseFreq (theBabynames(),input$theSex1, input$yearRange[1], input$yearRange[2],
+	freq <- eventReactive(input$goName,  {parseFreq (theBabynames(),input$theSex1, minYear(), maxYear(),
 	                                                 input$theName)})
 	compare <- eventReactive(input$goCompare, {parseTwoNames(theBabynames(),input$theSex3, 
 	                                                         input$compareNameOne,input$compareNameTwo,
-	                                                         input$yearRange[1], input$yearRange[2])})
+	                                                         minYear(), maxYear())})
 	#put this in function??
 	sortedUniqueNames <- reactive(getSorted(nameMatch(), isolate(input$sortAlpha)))
 
@@ -28,6 +24,7 @@ server <- shinyServer(function(input, output, session){
 	                                + geom_point(aes(colour=name))
 	)
 	output$slider <- renderUI(sliderInput("yearRange", label="Year Range", sep="",
-	                                      min=yearRange()[[1]], max=yearRange()[[2]],value=c(yearRange()[[1]],yearRange()[[2]]))       
+	                                      min=minYear(), max=maxYear(),value=c(minYear(),maxYear()))       
 	)
 })
+  
