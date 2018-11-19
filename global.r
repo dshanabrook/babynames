@@ -2,6 +2,9 @@
 library(shiny)
 library(babynames)
 library(ggplot2)
+library(magrittr)
+#install.packages("shinycssloaders")
+library(shinycssloaders)
 doDebug <<- F
 
 getSorted <- function(df, sortAlpha){
@@ -9,10 +12,14 @@ getSorted <- function(df, sortAlpha){
 	if (sortAlpha) 
 	  {#unique <- unique(df$name)
 	  #more efficient than unique
-		data <- sort(df[!duplicated(df$name),]$name)}
+		data <- as.data.frame(sort(df[!duplicated(df$name),]$name))
+		colnames(data) <- " "
+		}
 	else {
 		df <- aggregate(df[c("prop")],  by=df[c("name")], FUN="mean")
 		data <- df[order(df$prop,df$name,decreasing=T),]$name
+		data <- as.data.frame(data)
+		colnames(data) <- " "
 		#ddpl was slower
 	  #df2 <- ddply(df, .(name), summarise, qmean = mean(prop))
 		#data <- df2[order(df2$qmean,df2$name,decreasing=T),]$name

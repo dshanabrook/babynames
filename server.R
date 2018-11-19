@@ -1,6 +1,6 @@
 #babynames
 server <- shinyServer(function(input, output, session){	
-
+  
   nameMatch <-eventReactive(input$goNames, {parseNames(input$theSex1, input$yearRange1[1], input$yearRange1[2], 
                                                        input$theLetters)
 	 })
@@ -10,7 +10,7 @@ server <- shinyServer(function(input, output, session){
 	#put this in function??
 	sortedUniqueNames <- reactive(getSorted(nameMatch(), isolate(input$sortAlpha)))
 
-	output$allTheNames <- renderText(sortedUniqueNames())
+	output$allTheNames <- renderTable(sortedUniqueNames())
 	output$nameOverTime <- renderPlot(ggplot(freq(), aes(x=year, y=prop*100,group=sex))
 	                                  +geom_line(aes(colour=sex))
 	                                  )

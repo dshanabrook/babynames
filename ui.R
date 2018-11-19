@@ -31,7 +31,7 @@ ui <- fluidPage(
         actionButton("goNames", "Get Names")
       ),
       
-      mainPanel(column(8, h5(textOutput(outputId = "allTheNames"))))
+      mainPanel(column(8, h5(withSpinner(uiOutput(outputId = "allTheNames"),color="#0dc5c1"))))
                 ),
       tabPanel("Lookup a Name",
             sidebarPanel(
@@ -42,7 +42,10 @@ ui <- fluidPage(
 
                actionButton("goName", "Plot Name Over Time")),
               
-            mainPanel(column(10, h5(plotOutput("nameOverTime"))))
+            mainPanel(
+              column(10, 
+                     h5(withSpinner(plotOutput("nameOverTime"),color="#0dc5c1"))
+                     ))
                ),
       tabPanel("Compare Names",
                sidebarPanel(
@@ -54,7 +57,7 @@ ui <- fluidPage(
                   sliderInput("yearRange3", label = h3("Year Range"), sep="", min = 1880,  max = 2012, value = c(1880, 2013)),
 
                  actionButton("goCompare", "Do Compare")),
-                mainPanel(column(10, h5(plotOutput("plotCompare"))))
+                mainPanel(column(10, h5(withSpinner(plotOutput("plotCompare"),color="#0dc5c1"))))
                )
           ))
   
