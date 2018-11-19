@@ -3,9 +3,22 @@ library(shiny)
 library(babynames)
 library(ggplot2)
 library(magrittr)
+#devtools::install_github( "ThinkR-open/prenoms" )
+#install.packages("ukbabynames")
+library("prenoms")
 #install.packages("shinycssloaders")
 library(shinycssloaders)
 doDebug <<- F
+
+#load("data/babynames1974_2015.RData")
+# dat: scottish babynames, needs reformatting.
+
+data(prenoms)
+#[1] "year" "sex"  "name" "n"    "dpt"  "prop"
+data(ukbabynames)
+#[1] "year" "sex"  "name" "n"    "rank"
+data(babynames)
+#[1] "year" "sex"  "name" "n"    "prop"
 
 getSorted <- function(df, sortAlpha){
 	if (doDebug) print(cat("getSorted, rows: ", nrow(df)))
@@ -28,14 +41,15 @@ getSorted <- function(df, sortAlpha){
 	}
 
 parseNames <-
-  function(theSex,
+  function(theBabynames,
+           theSex,
            startYear,
            endYear,
            theLetters) {
  #   if (!is.character(theLetters)) {theLetters <- ""}
     if (doDebug) print(cat("parsenames name: ",theLetters))
     #sex
-    df <- babynames[babynames$sex == theSex, ]
+    df <- theBabynames[theBabynames$sex == theSex, ]
     #years
     df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
     #string
@@ -45,9 +59,9 @@ parseNames <-
     return(df3)
   }
 
-parseTwoNames <- function(theSex, nameOne,nameTwo,startYear,endYear){
+parseTwoNames <- function(theBabynames, theSex, nameOne,nameTwo,startYear,endYear){
   if (doDebug) print(cat("parseTwonames nameOne: ",nameOne))
-  df <- babynames[babynames$sex == theSex, ]
+  df <- theBabynames[theBabynames$sex == theSex, ]
   #nameOne <- tolower(nameOne)
   #nameTwo <- tolower(nameTwo)
   #years
@@ -58,13 +72,14 @@ parseTwoNames <- function(theSex, nameOne,nameTwo,startYear,endYear){
 }
 
 parseFreq <- 
-  function(theSex,
+  function(theBabynames,
+           theSex,
            startYear,
            endYear,
            theName) {
     if (doDebug) print("parseFreq ")
     #sex
-   df <- babynames
+   df <- theBabynames
     #years
     df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
     #print(nrow(df2))
@@ -82,7 +97,23 @@ lookupOneName <-function(theLookup, df){
 		theProp <- theName$prop*100
 		print(theProp)
 		return(theProp)
-	
 }
+
+getYearRange <- function(theNationality){
+  if (theNationality == "france")
+    {theMin <- min(prenoms$year)
+    theMax <- max(prenoms$year)}
+  else if (theNationality == "uk")
+    {theMin <- min(ukbabynames$year)
+    theMax <- max(ukbabynames$year)}
+  else if (theNationality == "usa")
+    {theMin <- min(babynames$year)
+    theMax <- max(babynames$year)}
+  else if (theNationality == "scotland")
+  {theMin <- min(babynames$year)
+    theMax <- max(babynames$year)}
+  return(list(theMin,theMax))
+}
+
 #http://stats.stackexchange.com/questions/11924/computing-percentile-rank-in-r
 #perc.rank <- function(x) trunc(rank(x))/length(x)

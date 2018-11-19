@@ -44,3 +44,5 @@ namesSorted <- getSorted(names, T)
 compare <- parseTwoNames(compareNameOne,compareNameTwo,startYear, endYear)
 ggplot(compare, aes(x=year, y=prop*100,group=name)) + geom_line(aes(colour=name))
 
+yearRange <- getYearRange("france")
+yearRange[1]
