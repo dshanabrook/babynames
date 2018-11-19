@@ -46,3 +46,7 @@ ggplot(compare, aes(x=year, y=prop*100,group=name)) + geom_line(aes(colour=name)
 
 yearRange <- getYearRange("france")
 yearRange[1]
+
+babynames <- ukbabynames
+names(babynames[5]) <- "prop"
+babynames$rank <- rank(-babynames$rank)

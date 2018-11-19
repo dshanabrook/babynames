@@ -1,11 +1,13 @@
 #global for babynames
 library(shiny)
 library(babynames)
+library(ukbabynames)
+library(prenoms)
 library(ggplot2)
 library(magrittr)
 #devtools::install_github( "ThinkR-open/prenoms" )
 #install.packages("ukbabynames")
-library("prenoms")
+
 #install.packages("shinycssloaders")
 library(shinycssloaders)
 doDebug <<- F
@@ -17,6 +19,8 @@ data(prenoms)
 #[1] "year" "sex"  "name" "n"    "dpt"  "prop"
 data(ukbabynames)
 #[1] "year" "sex"  "name" "n"    "rank"
+ukbabynames$rank <- -ukbabynames$rank
+names(ukbabynames)[5] <- "prop"
 data(babynames)
 #[1] "year" "sex"  "name" "n"    "prop"
 

@@ -18,10 +18,10 @@
 
 ui <- fluidPage(
   headerPanel(fluidRow(column(12,h2(style = "height:25px;background-color: light_blue;", "More baby names then you could imagine.")),
-              column(12,h4(style = "height:15px;background-color: light_blue;","       US births from Social Security registry ")))),
+              column(12,h4(style = "height:15px;background-color: light_blue;","       US births from Office of National Statistics ")))),
   
   tabsetPanel(
-    tabPanel("Nationality and What Years",
+    tabPanel("Settings",
              sidebarPanel(
                selectInput("theNationality", "Nationality:", 
                            list("France"="france", "United Kingdom"="uk",  "U.S.A." ="usa")),#"Scotland"="scotland",
@@ -44,7 +44,7 @@ ui <- fluidPage(
                 ),
       tabPanel("Lookup this Name",
             sidebarPanel(
-              textInput("theName", "Lookup a name:", value = "Mary"),
+              textInput("theName", "Popularity over time:", value = "Mary"),
 #               textInput("startYear2", "Starting year:", value = "1880"),
 #               textInput("endYear2", "Ending year:", value = "2013"),
 #                sliderInput("yearRange2", label = h3("Year Range"), sep="", min = 1880,  max = 2012, value = c(1880, 2013)),
