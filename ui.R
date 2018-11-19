@@ -17,12 +17,13 @@
 # }
 
 ui <- fluidPage(
-  headerPanel(fluidRow(offset = 4, "More baby names then you could imagine")),
+  headerPanel(fluidRow(column(12,h2(style = "height:25px;background-color: light_blue;", "More baby names then you could imagine.")),
+              column(12,h4(style = "height:15px;background-color: light_blue;","       US births from Social Security registry ")))),
   
   tabsetPanel(
     tabPanel("Find a name",
       sidebarPanel(
-        textInput("theLetters", "Name Start:", value = "Mar"),
+        textInput("theLetters", "Find a name that starts with:", value = "Mar"),
         selectInput("theSex1", "Sex", list("Girl" = "F", "Boy" = "M")),
         selectInput("sortAlpha","Sort:",list("Popularity" = FALSE, "Alphabetically" = TRUE)),
 #        textInput("startYear1", "Starting year:", value = "1880"),
@@ -33,7 +34,7 @@ ui <- fluidPage(
       
       mainPanel(column(8, h5(withSpinner(uiOutput(outputId = "allTheNames"),color="#0dc5c1"))))
                 ),
-      tabPanel("Lookup a Name",
+      tabPanel("Lookup this Name",
             sidebarPanel(
               textInput("theName", "Lookup a name:", value = "Mary"),
 #               textInput("startYear2", "Starting year:", value = "1880"),
@@ -47,7 +48,7 @@ ui <- fluidPage(
                      h5(withSpinner(plotOutput("nameOverTime"),color="#0dc5c1"))
                      ))
                ),
-      tabPanel("Compare Names",
+      tabPanel("Compare Two Names",
                sidebarPanel(
                  textInput("compareNameOne", "First Name:", value = "Mary"),
                  textInput("compareNameTwo", "Second Name:", value= "Margaret"),
