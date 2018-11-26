@@ -1,63 +1,38 @@
-#test
-library(shiny)
-library(babynames)
-#source("~/ShinyApps/babynames/cleanNames.R")
+
+source("~/ShinyApps/babynames/global.r")
 
 library(profvis)
-#profvis(runApp())
+#profvis(runApp)
 
-startYear <- 1900
-endYear <- 2013
-theYears <- c(startYear, endYear)
-sortAlpha <- F
-theLetters <- "L"
-theSex <- "F"
-theName <- "mary"
-compareNameOne <- "tom"
-compareNameTwo <- "dick"
-
-theNames <- parseNames(theSex, startYear, endYear, theLetters)
-theNames$rank <- perc.rank(theNames$prop)
-theNames$rank <- rank(theNames$prop)
-
-namesSorted <- getSorted(theNames, sortAlpha)
-summary(theNames)
-allTheNames <- namesSorted$name
-theOneFreq <- lookupOneName(theLookup, namesSorted)
-subset(theNames, rank < 1000)
-sort(theNames$rank)
+# theNames <- parseNames(theSex, startYear, endYear, theLetters)
+# theNames$rank <- perc.rank(theNames$prop)
+# theNames$rank <- rank(theNames$prop)
 
 ###########server dup###########
 
-startYear <- 1900
-endYear <- 2013
-theYears <- c(startYear, endYear)
 sortAlpha <- F
-theLetters <- "La"
-theSex <- "F"
-theName <- "robin"
-df <- names
-names <-parseNames(theSex, startYear, endYear, theLetters)
-freq <- parseFreq (theSex, startYear, endYear, tolower(theName))
-namesSorted <- getSorted(names, T)
+theLetters <- "la"
+theSex <- "M"
+theName <- "John"
+compareNameOne <- "Tom"
+compareNameTwo <- "Dick"
 
-compare <- parseTwoNames(compareNameOne,compareNameTwo,startYear, endYear)
+theNationality <- "usa"
+
+thebabynames <- as.data.frame(allbabynames[[theNationality]])
+minYear <- min(thebabynames$year)
+maxYear <- max(thebabynames$year)
+nameMatch <-{parseNames(thebabynames, theSex, minYear, maxYear,theLetters)}
+freqofaName <- {parseFreq (thebabynames,theSex, minYear, maxYear,theName)}
+compare <- parseTwoNames(thebabynames,theSex, compareNameOne,compareNameTwo,minYear, maxYear)
+sortedUniqueNames <- getSorted(nameMatch, sortAlpha)
+theMedianRankofaName <- ({mean(freqofaName$rank)})
 ggplot(compare, aes(x=year, y=prop*100,group=name)) + geom_line(aes(colour=name))
 
-yearRange <- getYearRange("france")
-yearRange[1]
 
-babynames <- ukbabynames
-names(babynames[5]) <- "prop"
-babynames$rank <- rank(-babynames$rank)
-install_genderdata_package()
-library(genderdata)
-data(package = "genderdata") 
-summary(napp)
-unique(napp$country)
-
-babynames<- icelandbabynames
-head(icelandbabynames)
-
-theNationality <- "norway"
-bn <- thebabynames[theNationality]
+#output$slider <- renderUI(sliderInput("yearRange", label="Year Range", sep="",
+#                                      min=minYear(), max=maxYear(),value=c(minYear(),maxYear()))
+summaryText <- paste(compareNameOne, 
+                "is a", "howCommon", "name.  It is ranked", median(freqofaName$rank), "out of", "howRankedTotal", "names during this period.",
+                 sep=" ")
+                

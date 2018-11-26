@@ -18,7 +18,7 @@
 
 ui <- fluidPage(
   headerPanel(fluidRow(column(12,h2(style = "height:25px;background-color: light_blue;", "More baby names then you could imagine.")),
-              column(12,h4(style = "height:15px;background-color: light_blue;","       US births from Office of National Statistics ")))),
+              column(12,h6(style = "height:15px;background-color: light_blue;","Sources: US Office of National Statistics, North Atlatntic Population Project, data.gouv.fr - le registre de l'état civil")))),
   
   tabsetPanel(
     tabPanel("Settings",
@@ -27,7 +27,7 @@ ui <- fluidPage(
                            list("France"="france", 
                                 "United Kingdom"="uk",  
                                 "U.S.A." ="usa", 
-                                "Iceland 19th C"= "iceland",
+                                "Iceland 19th C"="iceland",
                                 "Norway 19th C"="norway",
                                 "Sweden 19th C"="sweden",
                                 "Canada 19th C"="canada"
@@ -38,7 +38,7 @@ ui <- fluidPage(
      tabPanel("Find a name",
       sidebarPanel(
         textInput("theLetters", "Find a name that starts with:", value = "Mar"),
-        selectInput("theSex1", "Sex", list("Girl" = "F", "Boy" = "M")),
+        selectInput("theSex", "Sex", list("Girl" = "F", "Boy" = "M")),
         selectInput("sortAlpha","Sort:",list("Popularity" = FALSE, "Alphabetically" = TRUE)),
         actionButton("goNames", "Get Names")
       ),
@@ -52,7 +52,8 @@ ui <- fluidPage(
               
             mainPanel(
               column(10, 
-                     h5(withSpinner(plotOutput("nameOverTime"),color="#0dc5c1"))
+                     h5(withSpinner(plotOutput("nameOverTime"),color="#0dc5c1")),
+                     column(10, h6(uiOutput(outputId = "summaryText")))
                      ))
                ),
       tabPanel("Compare Two Names",

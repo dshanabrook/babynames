@@ -5,9 +5,9 @@ account: bravo
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 568559
-bundleId: 1708871
+bundleId: 1709766
 url: https://bravo.shinyapps.io/babyname/
-when: 1542641622.621
+when: 1542674697.92388
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: .Rapp.history|.RData|test.R|archive/cleanNames.R|archive/googleAnalytics.js|archive/uiOld.R|archive/uiWithoutPanels.R|data/babynames1974_2015.RData

@@ -5,13 +5,11 @@ library(ukbabynames)
 library(prenoms)
 library(ggplot2)
 library(magrittr)
-#devtools::install_github( "ThinkR-open/prenoms" )
-#install.packages("ukbabynames")
-
-#install.packages("shinycssloaders")
 library(shinycssloaders)
+library(reshape)
+#library(dplyr)
+# install.packages("genderdata", repos = "http://packages.ropensci.org")
 
-#install_genderdata_package()
 library(genderdata)
 data(package = "genderdata") 
 doDebug <<- F
@@ -21,12 +19,17 @@ doDebug <<- F
 
 data(prenoms)
 #[1] "year" "sex"  "name" "n"    "dpt"  "prop"
+#remove dpt
+prenomsFr <- prenoms %>% group_by(name, year, sex)
+prenomsFr <- prenomsFr  %>% summarise( n = sum(n) ) 
+prenomsFr <- prenomsFr  %>% arrange( year )
+#[1] "name" "year" "sex"  "n"  
+
 data(ukbabynames)
 #[1] "year" "sex"  "name" "n"    "rank"
-ukbabynames$rank <- -ukbabynames$rank
-names(ukbabynames)[5] <- "prop"
 data(babynames)
 #[1] "year" "sex"  "name" "n"    "prop"
+
 
 modifyNappBabynames <- function(bn){
   bnMod<-melt(bn, id.vars=c("name", "country","year"))
@@ -43,18 +46,16 @@ swedenbabynames <- modifyNappBabynames(napp[napp$country=="Sweden",])
 canadababynames <- modifyNappBabynames(napp[napp$country=="Canada",])
 #ukbabynames <- napp[napp$country=="United Kingdom",]
 icelandbabynames <- modifyNappBabynames(napp[napp$country=="Iceland",])
-thebabynames <- list(babynames, ukbabynames, prenoms, norwaybabynames, swedenbabynames, canadababynames, icelandbabynames)
-names(thebabynames) <- c("usa","uk","france","norway","sweden","canada","iceland")
+allbabynames <- list(babynamesUSA, ukbabynames, prenomsFr, norwaybabynames, swedenbabynames, canadababynames, icelandbabynames)
+names(allbabynames) <- c("usa","uk","france","norway","sweden","canada","iceland")
 
-
-# library(reshape2)
-
-
+#what do we want with upper/lower case???
+x <- lapply(allbabynames, '[[', 'name')
+y <- toupper
 
 getSorted <- function(df, sortAlpha){
 	if (doDebug) print(cat("getSorted, rows: ", nrow(df)))
-	if (sortAlpha) 
-	  {#unique <- unique(df$name)
+	if (sortAlpha) {
 	  #more efficient than unique
 		data <- as.data.frame(sort(df[!duplicated(df$name),]$name))
 		colnames(data) <- " "
@@ -64,9 +65,6 @@ getSorted <- function(df, sortAlpha){
 		data <- df[order(df$prop,df$name,decreasing=T),]$name
 		data <- as.data.frame(data)
 		colnames(data) <- " "
-		#ddpl was slower
-	  #df2 <- ddply(df, .(name), summarise, qmean = mean(prop))
-		#data <- df2[order(df2$qmean,df2$name,decreasing=T),]$name
 		}
 	return(data)	
 	}
@@ -74,80 +72,56 @@ getSorted <- function(df, sortAlpha){
 parseNames <-
   function(theBabynames,
            theSex,
-           startYear,
-           endYear,
+           minYear,
+           maxYear,
            theLetters) {
- #   if (!is.character(theLetters)) {theLetters <- ""}
+    theLetters <- tolower(theLetters)
     if (doDebug) print(cat("parsenames name: ",theLetters))
-    #sex
     df <- theBabynames[theBabynames$sex == theSex, ]
-    #years
-    df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
-    #string
-    df3 <- df2[substr(df2$name,1,nchar(theLetters)) == theLetters, ]
-    print(nrow(df3))
-    #aggregate by year (exact match)
+    df2 <- df[(df$year >= minYear) & (df$year <= maxYear), ]
+    df3 <- df2[tolower(substr(df2$name,1,nchar(theLetters))) == theLetters, ]
     return(df3)
   }
 
-parseTwoNames <- function(theBabynames, theSex, nameOne,nameTwo,startYear,endYear){
-  if (doDebug) print(cat("parseTwonames nameOne: ",nameOne))
-  df <- theBabynames[theBabynames$sex == theSex, ]
-  #nameOne <- tolower(nameOne)
-  #nameTwo <- tolower(nameTwo)
-  #years
-  df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
-  #df3 <- df2[(tolower(df2$name) == nameOne) | (tolower(df2$name) == nameTwo), ]
-  df3 <- df2[(df2$name == nameOne) | (df2$name == nameTwo), ]
+parseTwoNames <- function(thebabynames, theSex, compareNameOne,compareNameTwo,minYear,maxYear){
+  if (doDebug) print(cat("parseTwonames compareNameOne: ",compareNameOne))
+#  compareNameOne <- tolower(compareNameOne)
+#  compareNameTwo <- tolower(compareNameTwo)
+  df <- thebabynames[thebabynames$sex == theSex, ]
+  df2 <- df[(df$year >= minYear) & (df$year <= maxYear), ]
+  df3 <- df2[(df2$name == compareNameOne) | (df2$name == compareNameTwo), ]
   return(df3)
 }
 
+findHowCommon <- function(freq) {
+  freq <- signif(mean(freq)*100,2)
+  veryCommon <- 2
+  common <- 1
+  neither<- 0.5
+  rare <-   0.01
+  if (freq > veryCommon) commonness <- ("Very common")
+  else if (freq > common) commonness <- ("common")
+  else if (freq > neither) commonness <- ("neither common nor rare")
+  else if (freq > rare) commonness <- ("rare")
+  else commonness <- ("Very rare")
+  return(list(commonness, freq))
+}
 parseFreq <- 
-  function(theBabynames,
+  function(thebabynames,
            theSex,
-           startYear,
-           endYear,
+           minYear,
+           maxYear,
            theName) {
     if (doDebug) print("parseFreq ")
     #sex
-   df <- theBabynames
-    #years
-    df2 <- df[(df$year >= startYear) & (df$year <= endYear), ]
-    #print(nrow(df2))
-    #aggregate by year (exact match!)
-    df5 <- df2[df2$name == theName, ]
-    df6 <- aggregate(df5["prop"], by = df5[c("year","sex")], FUN = "mean")
-    return(df6)
+    df <- thebabynames
+    df2 <- df[(df$year >= minYear) & (df$year <= maxYear), ]
+    #rank is incorrect here.  need the rank for each year seperated!!.  not using rank now, use prop instead
+    df2$rank <-row(df2)[,1]
+    df3 <- df2[df2$name == theName, ]
+    df4 <- aggregate(df3["prop"], by = df3[c("year","sex","rank")], FUN = "mean")
+    return(df4)
   }
-
-
-lookupOneName <-function(theLookup, df){
-	if (doDebug) print("lookupOneName ")
-		df$rank <- perc.rank(df$prop)
-		theName <- df[df$name==theLookup,]
-		theProp <- theName$prop*100
-		print(theProp)
-		return(theProp)
-}
-
-getYearRange <- function(theNationality){
-  if (theNationality == "france")
-    {theMin <- min(prenoms$year)
-    theMax <- max(prenoms$year)}
-  else if (theNationality == "uk")
-    {theMin <- min(ukbabynames$year)
-    theMax <- max(ukbabynames$year)}
-  else if (theNationality == "usa")
-    {theMin <- min(babynames$year)
-    theMax <- max(babynames$year)}
-  else if (theNationality == "scotland")
-  {theMin <- min(babynames$year)
-    theMax <- max(babynames$year)}
-  else if (theNationality == "iceland")
-  {theMin <- min(icelandbabynames$year)
-  theMax <- max(icelandbabynames$year)}
-  return(list(theMin,theMax))
-}
 
 #http://stats.stackexchange.com/questions/11924/computing-percentile-rank-in-r
 #perc.rank <- function(x) trunc(rank(x))/length(x)

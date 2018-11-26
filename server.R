@@ -1,30 +1,35 @@
 #babynames
 server <- shinyServer(function(input, output, session){	
   
-  theBabynames <- reactive(as.data.frame(thebabynames[[input$theNationality]]))
+  thebabynames <- reactive(as.data.frame(allbabynames[[input$theNationality]]))
   
-  yearRange <- reactive(getYearRange(input$theNationality))
-  minYear <- reactive(min(theBabynames()$year))
-  maxYear <- reactive(max(theBabynames()$year))
-  nameMatch <-eventReactive(input$goNames, {parseNames(theBabynames(), input$theSex1, minYear(), maxYear(), 
+ # yearRange <- reactive(getYearRange(input$theNationality))
+  minYear <- reactive(min(thebabynames()$year))
+  maxYear <- reactive(max(thebabynames()$year))
+  startYear <- reactive(input$yearRange[1])
+  endYear <- reactive(input$yearRange[2])
+ 
+  nameMatch <-eventReactive(input$goNames, {parseNames(thebabynames(), input$theSex, startYear(), endYear(), 
                                                        input$theLetters)})
-	freq <- eventReactive(input$goName,  {parseFreq (theBabynames(),input$theSex1, minYear(), maxYear(),
+	freqofaName <- eventReactive(input$goName,  {parseFreq (thebabynames(),input$theSex, startYear(), endYear(),
 	                                                 input$theName)})
-	compare <- eventReactive(input$goCompare, {parseTwoNames(theBabynames(),input$theSex3, 
+	howCommon <- reactive(findHowCommon(freqofaName()$prop))
+	
+	compare <- eventReactive(input$goCompare, {parseTwoNames(thebabynames(),input$theSex, 
 	                                                         input$compareNameOne,input$compareNameTwo,
-	                                                         minYear(), maxYear())})
-	#put this in function??
+	                                                         startYear(), endYear())})
 	sortedUniqueNames <- reactive(getSorted(nameMatch(), isolate(input$sortAlpha)))
-
+  
 	output$allTheNames <- renderTable(sortedUniqueNames())
-	output$nameOverTime <- renderPlot(ggplot(freq(), aes(x=year, y=prop*100,group=sex))
+	output$nameOverTime <- renderPlot(ggplot(freqofaName(), aes(x=year, y=prop*100,group=sex))
 	                                  +geom_line(aes(colour=sex))
 	                                  )
 	output$plotCompare <- renderPlot(ggplot(compare(), aes(x=year, y=prop*100,group=sex))
-	                                + geom_point(aes(colour=name))
-	)
+	                                + geom_point(aes(colour=name)))
 	output$slider <- renderUI(sliderInput("yearRange", label="Year Range", sep="",
-	                                      min=minYear(), max=maxYear(),value=c(minYear(),maxYear()))       
-	)
+	                                      min=minYear(), max=maxYear(),value=c(minYear(),maxYear())))
+output$summaryText <- renderText(paste(input$theName, 
+                                 "was a", howCommon()[1], "name.  It occured ", howCommon()[2], "% during this period.",
+                                  sep=" "))
 })
   
